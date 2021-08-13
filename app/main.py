@@ -14,6 +14,7 @@ import os
 import random
 from csv import DictReader
 from random import Random
+from json import dumps
 
 from flask import Flask, render_template, send_file, request
 
@@ -50,42 +51,36 @@ def questioner():
     # Generate a 4-word seed
     seed_value = "-".join(random.choices(seedWords, k=4))
 
+    # Initialise the random number generator with that seed
+    random_generator = Random(seed_value)
+
+    # Shuffle the questions
+    questions_copy = questions.copy()
+    random_generator.shuffle(questions_copy)
+
     # Return the template with the seed value
-    return render_template("questioner.html", seed_value=seed_value)
+    return render_template("questioner.html", seed_value=seed_value, questions=dumps(questions_copy))
 
 
 # CODE-ONLY PAGES
-@app.route("/code-only/get-question", methods=["POST"])
-def get_question():
+@app.route("/code-only/get-questions", methods=["POST"])
+def get_questions():
     # Get the data from the submitted form
     data = request.form
 
     # Assert that the data contains the needed values
-    if not ("seed" in data and "question_num" in data):
+    if "seed" not in data:
         return "Both the `seed` and `question_num` must be present!"
-
-    # Assert that the question number is an integer that is within the valid range
-    try:
-        question_num = int(data["question_num"])
-
-        if question_num < 1:
-            return "The question number must be an integer that is greater than 1!"
-        elif question_num > numQuestions:
-            return {"Question": "No more questions!", "Answer": "No more answers!", "Theme": "No more questions!"}
-
-    except ValueError:
-        return f"The `question_num` must be an integer! (Got: {data['question_num']})"
 
     # Initialise the random number generator with that seed
     random_generator = Random(data["seed"])
 
     # Shuffle the questions
-    # Todo: find a better & more efficient method to find the question
     questions_copy = questions.copy()
     random_generator.shuffle(questions_copy)
 
-    # Return the question
-    return questions_copy[question_num - 1]  # The questions are 1-indexed
+    # Return the questions
+    return dumps(questions_copy)
 
 
 # MISCELLANEOUS PAGES

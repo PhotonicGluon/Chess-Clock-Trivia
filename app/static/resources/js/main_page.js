@@ -46,23 +46,16 @@ function getNumClocks() {
 }
 
 function getNextQuestion(questionNum) {
-    // Send a POST request to the server for the next question
-    $.ajax({
-        url: "/code-only/get-question",
-        method: "POST",
-        data: {"seed": seedValue, "question_num": questionNum},
-    }).done((data) => {
-        // Increment question number
-        questionNumber++;
+    // Get the question and topic from the questions array
+    let topic = questions[questionNum - 1]["Topic"];
+    let question = questions[questionNum - 1]["Question"];
 
-        // Get the question and topic from the data
-        let topic = data["Topic"];
-        let question = data["Question"];
+    // Update the question and topic spans
+    questionSpan.text(question);
+    topicSpan.text(topic);
 
-        // Update the question and topic spans
-        questionSpan.text(question);
-        topicSpan.text(topic);
-    })
+    // Increment question number
+    questionNumber++;
 }
 
 function confettiFireworks(duration, fireworkInterval) {
@@ -70,7 +63,7 @@ function confettiFireworks(duration, fireworkInterval) {
     let canvas = document.getElementById("confetti-canvas");
 
     // Create the confetti function on that canvas
-    canvas.confetti = canvas.confetti || confetti.create(canvas, { resize: true });
+    canvas.confetti = canvas.confetti || confetti.create(canvas, {resize: true});
 
     // Calculate the duration in milliseconds and determine when the animation should end
     duration *= 1000;
@@ -125,17 +118,22 @@ let isPaused = false;  // Flag that says whether the interval is paused or not
 let questionNumber = 1;  // Current question number
 let activeTeam = 1;  // The first team's clock will go first
 let eliminatedTeams = [];  // List of eliminated teams that cannot play anymore
-
 let gameStarted = false;  // Has the game started?
-let seedValue = null;
+let questions = null;  // Structure to store the questions
 
 // MAIN CODE
 // Code to be run once the user clicks on "Submit Seed Value"
 submitSeedValueButton.click(() => {
     // Check if a seed value was entered and needs to be entered
-    if (seedValue === null && seedValueInput.val() !== "") {
-        // Update the seed value
-        seedValue = seedValueInput.val();
+    if (seedValueInput.val() !== "") {
+        // Get all questions
+        $.ajax({
+            url: "/code-only/get-questions",
+            method: "POST",
+            data: {"seed": seedValueInput.val()},
+        }).done((data) => {
+            questions = JSON.parse(data);
+        });
 
         // Show the main div and hide this div
         $("#main-body").css("display", "block");
