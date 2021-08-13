@@ -24,7 +24,6 @@ SEED_WORDS_FILE = "data/seed-words.txt"
 # SETUP
 # Change working directory to the `app` directory
 os.chdir("app")
-print(os.getcwd())
 
 # Get the list of questions from the CSV file
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
