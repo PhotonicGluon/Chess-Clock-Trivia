@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chess Clock Trivia - Questioner</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for("static", filename="resources/css/questioner.css") }}">
+
+    <!-- Vendors' Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Get seed value -->
+    <script>
+        const SEED_VALUE = "{{ seed_value }}";
+    </script>
+</head>
+
+<body>
+
+<h1>Chess Clock Trivia - Questioner</h1>
+
+<!-- Seed Value -->
+<div class="row center">
+    <h2>Seed Value</h2>
+    <p>
+        Your seed value is<br>
+        <code class="seed-value">{{ seed_value }}</code><br>
+        Copy and paste this seed value into the main page.
+    </p>
+</div>
+
+<!-- Questions Area -->
+<hr>
+<div class="row center">
+    <h2 style="text-decoration: underline;">Question</h2>
+    <span id="question">Click the button below to get the first question.</span><br>
+    <span id="answer">This will be the answer to the question.</span>
+    <br><br>
+    <a class="button" id="get-next-question">Get Next Question</a>
+</div>
+<hr>
+
+<!-- Include script -->
+<script src="{{ url_for("static", filename="resources/js/questioner.js") }}"></script>
+</body>
+
+</html>

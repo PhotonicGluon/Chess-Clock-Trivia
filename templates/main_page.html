@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chess Clock Trivia</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for("static", filename="resources/css/main_page.css") }}">
+
+    <!-- Vendors' Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+</head>
+
+<body>
+<!-- This will be shown first -->
+<div class="center-screen" id="seed-entering-modal">
+    <h1>Chess Clock Trivia</h1>
+    <p>
+        Please go <a href="{{ url_for("questioner") }}" target="_blank">here</a> to set up the Questioner side and
+        obtain the seed value.
+    </p>
+
+    <br>
+
+    <div class="row center">
+        <h2>Seed Value</h2>
+        <label for="seed-value"></label><input class="center" id="seed-value" type="text"><br>
+        <a class="button" id="submit-seed-value">Submit Seed Value</a>
+    </div>
+</div>
+
+<!-- This will only be shown once the seed value has been entered -->
+<div id="main-body" style="display: none">
+    <h1>Chess Clock Trivia</h1>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Clocks Area -->
+    <div class="row" id="clocks-area">
+        <div class="clock-area center" id="clock-area-1">
+            <span class="team-name" id="team-name-1" contenteditable>Team 1</span>
+
+            <div class="clock">
+                <span id="clock-1">01:00</span>
+            </div>
+
+            <div class="clock-area-buttons">
+
+                <a class="button button-disabled" id="toggle-1" onclick="toggleClock(this)">Resume Clock</a>
+                <br><br>
+                <a class="button button-disabled" id="deduct-1" onclick="deductTime(this)">Deduct Time</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Area -->
+    <hr>
+    <div class="row center">
+        <h2 style="text-decoration: underline;" id="question-header">Question</h2>
+        <span id="question">Start the game to get the first question.</span><br>
+        <span id="topic">This is the topic of the current question.</span>
+    </div>
+    <hr>
+
+    <!-- Setup Area -->
+    <div class="row center">
+        <h2>Number of Players</h2>
+        <label for="num-players"></label><input class="input-field" id="num-players" type="number" min="1" value="1">
+        <h2>Time Limit (in seconds)</h2>
+        <label for="time-limit"></label><input class="input-field" id="time-limit" type="number" min="1" value="60">
+        <h2>Penalty Time (in seconds)</h2>
+        <label for="penalty-time"></label><input class="input-field" id="penalty-time" type="number" min="1" value="10">
+        <br><br>
+        <a class="button" id="start-game">Start The Game!</a>
+    </div>
+</div>
+
+<!-- Include script -->
+<script src="{{ url_for("static", filename="resources/js/main_page.js") }}"></script>
+</body>
+
+</html>

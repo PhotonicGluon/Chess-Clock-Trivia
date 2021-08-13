@@ -1,0 +1,53 @@
+/* GENERAL STYLING */
+* {
+    font-family: "Lato", "Arial", sans-serif;
+    max-width: 900px;
+    margin: auto;
+}
+
+div {
+    margin-bottom: 10px;
+}
+
+h1 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-decoration: underline;
+    text-align: center;
+}
+
+/* CLASS-BASED STYLING */
+/* Buttons */
+.button {
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #ddd;
+    transition: background-color 0.1s;
+}
+
+/* Misc */
+.center {
+    text-align: center;
+}
+
+.seed-value {
+    font-size: 18pt;
+    color: #d63384;
+    word-wrap: break-word;
+    font-family: "Courier New", "Courier", "Source Code Pro", monospace;
+}
+
+/* ELEMENT-BASED STYLING */
+#answer {
+    color: #333;
+    font-size: 12pt;
+}
+
+#question {
+    font-size: 18pt;
+}
