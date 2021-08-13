@@ -1,8 +1,8 @@
 """
-app.py
+main.py
 
 Created on 2021-08-12
-Updated on 2021-08-12
+Updated on 2021-08-13
 
 Copyright © Ryan Kan
 
@@ -10,6 +10,7 @@ Description: Main flask app.
 """
 
 # IMPORTS
+import os
 import random
 from csv import DictReader
 from random import Random
@@ -21,6 +22,10 @@ TRIVIA_QUESTIONS_FILE = "data/Trivia.csv"
 SEED_WORDS_FILE = "data/seed-words.txt"
 
 # SETUP
+# Change working directory to the `app` directory
+os.chdir("app")
+print(os.getcwd())
+
 # Get the list of questions from the CSV file
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
     csvReader = DictReader(f)
@@ -57,7 +62,7 @@ def get_question():
     data = request.form
 
     # Assert that the data contains the needed values
-    if not("seed" in data and "question_num" in data):
+    if not ("seed" in data and "question_num" in data):
         return "Both the `seed` and `question_num` must be present!"
 
     # Assert that the question number is an integer that is within the valid range
