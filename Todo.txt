@@ -1,0 +1,4 @@
+Todo:
+    - Fill in `README.md`
+    - Make the Questioner page mobile compatible (it currently looks very ugly)
+    - Write down rules for Chess Clock Trivia
