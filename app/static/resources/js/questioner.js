@@ -15,8 +15,8 @@ getNextQuestionButton.click(() => {
     let question = QUESTIONS[questionNumber - 1]["Question"];
 
     // Update the question and answer spans
-    questionSpan.text(question);
-    answerSpan.text("Answer: " + answer);
+    questionSpan.html(question);
+    answerSpan.html("Answer: " + answer);
 
     // Increment question number
     questionNumber++;

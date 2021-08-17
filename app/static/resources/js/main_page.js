@@ -51,8 +51,8 @@ function getNextQuestion(questionNum) {
     let question = questions[questionNum - 1]["Question"];
 
     // Update the question and topic spans
-    questionSpan.text(question);
-    topicSpan.text(topic);
+    questionSpan.html(question);
+    topicSpan.html("Topic: " + topic);
 
     // Increment question number
     questionNumber++;
@@ -290,12 +290,24 @@ function deductTime(button) {
         // Get the team number from the button ID
         let teamNumber = parseInt(buttonID.match(/\d+/g), 10);
 
+        // Get that team's clock
+        let clock = $(`#clock-${teamNumber}`);
+
         // Deduct time from the clock of that team
-        // Todo: handle the case when the time runs below zero (the colour of the timer should be red)
-        times[teamNumber] = Math.max(0, times[teamNumber] - penaltyTime);  // Time cannot go below 0
+        if (times[teamNumber] - penaltyTime <= 0) {
+            // Set the time to zero
+            times[teamNumber] = 0
+
+            // Change the colour of that clock's text to red
+            clock.css("color", "red");
+
+        } else {
+            // Since the time does not go below zero, it is safe to just subtract the time
+            times[teamNumber] -= penaltyTime;
+        }
 
         // Update clock text
-        $(`#clock-${teamNumber}`).text(displayTime(times[teamNumber]));
+        clock.text(displayTime(times[teamNumber]));
     }
 }
 
