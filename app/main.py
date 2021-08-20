@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-08-13
+Updated on 2021-08-17
 
 Copyright © Ryan Kan
 
@@ -21,6 +21,8 @@ from flask import Flask, render_template, send_file, request
 # CONSTANTS
 TRIVIA_QUESTIONS_FILE = "data/Trivia.csv"
 SEED_WORDS_FILE = "data/seed-words.txt"
+
+SEED_LENGTH = 5  # Number of words in the seed
 
 # SETUP
 # Change working directory to the `app` directory
@@ -48,8 +50,8 @@ def main_page():
 
 @app.route("/questioner")
 def questioner():
-    # Generate a 4-word seed
-    seed_value = "-".join(random.choices(seedWords, k=4))
+    # Generate a seed based on the words in the `SEED_WORDS_FILE`
+    seed_value = "-".join(random.choices(seedWords, k=SEED_LENGTH))
 
     # Initialise the random number generator with that seed
     random_generator = Random(seed_value)
