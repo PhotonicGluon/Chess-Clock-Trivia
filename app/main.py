@@ -37,6 +37,7 @@ os.chdir("app")
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
     csvReader = DictReader(f)
     questions = [line for line in csvReader]
+    questions = questions[:10]  # TODO: REMOVE
     numQuestions = len(questions)
 
 # Get the list of seed words from the `SEED_WORDS_FILE`
@@ -70,7 +71,7 @@ class CheckSessionExpiryThread(threading.Thread):
             # Actually delete the sessions
             for session_id in session_id_to_delete:
                 sessions.pop(session_id)
-                app.logger.info(f"Session '{key}' has expired and was purged")
+                app.logger.info(f"Session '{session_id}' has expired and was purged")
 
 
 # Start that thread
@@ -96,28 +97,20 @@ def get_questions_from_session(session_id):
 # VIEWABLE PAGES
 @app.route("/")
 def main_page():
+    print(sessions)
     return render_template("main_page.html")
 
 
 @app.route("/questioner")
-def questioner():  # TODO: Update
-    # Generate a seed based on the words in the `SEED_WORDS_FILE`
-    seed_value = " ".join(choices(seedWords, k=SEED_LENGTH))
-
-    # Initialise the random number generator with that seed
-    random_generator = Random(seed_value)
-
-    # Shuffle the questions
-    questions_copy = questions.copy()
-    random_generator.shuffle(questions_copy)
-
-    # Return the template with the seed value
-    return render_template("questioner.html", seed_value=seed_value, questions=dumps(questions_copy))
+def questioner():
+    print(sessions)
+    return render_template("questioner.html")
 
 
 # CODE-ONLY PAGES
 @app.route("/code-only/heartbeat", methods=["POST"])
 def heartbeat():
+    print(sessions)
     # Get the data from the submitted form
     data = request.form
 
@@ -137,11 +130,13 @@ def heartbeat():
 
 @app.route("/code-only/generate-session-id", methods=["POST"])
 def generate_session_id():
+    print(sessions)
     return " ".join(choices(seedWords, k=SEED_LENGTH))
 
 
 @app.route("/code-only/get-questions", methods=["POST"])
 def get_questions():
+    print(sessions)
     # Get the data from the submitted form
     data = request.form
 
@@ -155,6 +150,7 @@ def get_questions():
 
 @app.route("/code-only/set-up-session", methods=["POST"])
 def set_up_session():
+    print(sessions)
     # Get the data from the submitted form
     data = request.form
 
@@ -184,6 +180,7 @@ def set_up_session():
 
 @app.route("/code-only/update-session", methods=["POST"])
 def update_session():
+    print(sessions)
     # Get the data from the submitted form
     data = request.form
 
@@ -193,7 +190,7 @@ def update_session():
 
     # Check if the session ID is valid
     if data["session_id"] not in sessions:
-        return f"Session ID '{data['session_id']}' does not exist."
+        return f"The session ID '{data['session_id']}' does not exist, so the session cannot be updated."
 
     # Update session data
     try:
@@ -201,13 +198,13 @@ def update_session():
     except ValueError:
         return f"Invalid question number '{data['question_num']}'."
 
-    # Return OK message
-    return "OK"
+    return "Session updated successfully."
 
 
 # MISCELLANEOUS PAGES
 @app.route("/favicon.ico")
 def favicon():
+    print(sessions)
     return send_file("static/resources/img/favicon.ico")
 
 
