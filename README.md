@@ -1,5 +1,9 @@
 # Chess Clock Trivia
 
+## Installation
+Todo: write installation instructions.
+- Need redis
+
 ## Credits
 Chess Clock Trivia's webpage's favicon was generated using the following graphics from Twitter Twemoji:
 
