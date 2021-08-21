@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for("static", filename="resources/css/base.css") }}">
+    {% block stylesheets %}{% endblock %}
+
+    <!-- Vendors' Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    {% block vendor_scripts %}{% endblock %}
+</head>
+
+<body>
+{% block content %}{% endblock %}
+
+<!-- Include Scripts -->
+<script src="{{ url_for("static", filename="resources/js/base.js") }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+
+</html>

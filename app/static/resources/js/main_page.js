@@ -98,12 +98,12 @@ function confettiFireworks(duration, fireworkInterval) {
 }
 
 // GET ELEMENTS
-let seedValueInput = $("#seed-value");
+let sessionIDInput = $("#session-id");
 let numPlayersInput = $("#num-players");
 let timeLimitInput = $("#time-limit");
 let penaltyTimeInput = $("#penalty-time");
 
-let submitSeedValueButton = $("#submit-seed-value");
+let submitSessionIDButton = $("#submit-session-id");
 let startGameButton = $("#start-game");
 
 let questionSpan = $("#question");
@@ -122,22 +122,43 @@ let gameStarted = false;  // Has the game started?
 let questions = null;  // Structure to store the questions
 
 // MAIN CODE
+// Code to be run once the page is loaded
+$(document).ready(() => {
+    // Get a session ID from the server
+    $.ajax({
+        url: "/code-only/generate-session-id",
+        method: "POST"
+    }).done((data) => {
+        // Update the span
+        $("#session-id-span").text(data);
+    });
+});
+
 // Code to be run once the user clicks on "Submit Seed Value"
-submitSeedValueButton.click(() => {
-    // Check if a seed value was entered and needs to be entered
-    if (seedValueInput.val() !== "") {
+submitSessionIDButton.click(() => {
+    if (sessionIDInput.val() !== "") {
         // Get all questions
         $.ajax({
-            url: "/code-only/get-questions",
+            url: "/code-only/set-up-session",
             method: "POST",
-            data: {"seed": seedValueInput.val()},
+            data: {"session_id": sessionIDInput.val()},
         }).done((data) => {
-            questions = JSON.parse(data);
-        });
+            // Update session ID
+            sessionID = sessionIDInput.val();
 
-        // Show the main div and hide this div
-        $("#main-body").css("display", "block");
-        $("#seed-entering-modal").css("display", "none");
+            // Parse the data
+            data = JSON.parse(data);
+
+            // Parse the questions and update `questions` array
+            questions = data["questions"];
+
+            // Show the main div and hide this div
+            $("#main-body").css("display", "block");
+            $("#session-id-entering-modal").css("display", "none");
+
+            // Make the session ID appear when hovering over the title
+            $("#main-title").prop("title", `Session ID: ${sessionID}`);
+        });
     }
 });
 

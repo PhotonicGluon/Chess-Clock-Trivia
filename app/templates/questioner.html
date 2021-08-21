@@ -1,52 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Chess Clock Trivia - Questioner</title>
+{% extends "base.html" %}
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+{% block title %}Chess Clock Trivia - Questioner{% endblock %}
 
-    <!-- Stylesheet -->
+{% block stylesheets %}
     <link rel="stylesheet" href="{{ url_for("static", filename="resources/css/questioner.css") }}">
+{% endblock %}
 
-    <!-- Vendors' Scripts -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+{% block content %}
+    <!-- This will be shown first -->
+    <div class="center-screen" id="session-id-entering-modal">
+        <h1>Chess Clock Trivia - Questioner</h1>
 
-    <!-- Get questions -->
-    <script>
-        const QUESTIONS = {{ questions|safe }};
-    </script>
-</head>
+        <div class="row center">
+            <h2>Session ID</h2>
+            <label for="session-id"></label><input class="center" id="session-id" type="text"
+                                                   placeholder="Enter a session ID here"><br>
+            <a class="button" id="submit-session-id">Submit Session ID</a><br><br>
+            <span id="submission-errors"></span>
+        </div>
+    </div>
 
-<body>
+    <!-- This will only be shown once the session ID has been entered -->
+    <div id="main-body" style="display: none">
+        <h1 id="main-title">Chess Clock Trivia - Questioner</h1>
 
-<h1>Chess Clock Trivia - Questioner</h1>
+        <!-- Questions Area -->
+        <div>
+            <hr>
+            <div class="row center">
+                <h2 style="text-decoration: underline;">Question</h2>
+                <span id="question">Click the button below to get the first question.</span><br>
+                <span id="answer">This will be the answer to the question.</span>
+                <br><br>
+                <a class="button" id="get-next-question">Get Next Question</a>
+            </div>
+            <hr>
+        </div>
 
-<!-- Seed Value -->
-<div class="row center">
-    <h2>Seed Value</h2>
-    <p>
-        Your seed value is<br>
-        <code class="seed-value">{{ seed_value }}</code><br>
-        Copy and paste this seed value into the main page.
-    </p>
-</div>
 
-<!-- Questions Area -->
-<hr>
-<div class="row center">
-    <h2 style="text-decoration: underline;">Question</h2>
-    <span id="question">Click the button below to get the first question.</span><br>
-    <span id="answer">This will be the answer to the question.</span>
-    <br><br>
-    <a class="button" id="get-next-question">Get Next Question</a>
-</div>
-<hr>
+        <!-- Update session on server section -->
+        <div class="row center">
+            <a class="button" id="update-session">Update Session on Server</a>
+        </div>
+    </div>
+{% endblock %}
 
-<!-- Include script -->
-<script src="{{ url_for("static", filename="resources/js/questioner.js") }}"></script>
-</body>
-
-</html>
+{% block scripts %}
+    <script src="{{ url_for("static", filename="resources/js/questioner.js") }}"></script>
+{% endblock %}
