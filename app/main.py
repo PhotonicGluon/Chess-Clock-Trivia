@@ -57,12 +57,20 @@ class CheckSessionExpiryThread(threading.Thread):
         app.logger.info(f"Check session expiry thread started")
 
         while True:
+            # Wait for a while before actually checking for expiry
             sleep(CHECK_EXPIRY_INTERVAL)
+
+            # Get a list of session IDs to delete
+            session_id_to_delete = []
 
             for key, session in sessions.items():
                 if session["expiry"] < datetime.now():
-                    sessions.pop(key)
-                    app.logger.info(f"Session '{key}' has expired and was purged")
+                    session_id_to_delete.append(key)
+            
+            # Actually delete the sessions
+            for session_id in session_id_to_delete:
+                sessions.pop(session_id)
+                app.logger.info(f"Session '{key}' has expired and was purged")
 
 
 # Start that thread
