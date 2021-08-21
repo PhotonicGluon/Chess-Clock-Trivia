@@ -69,9 +69,15 @@ updateSessionButton.click(() => {
        method: "POST",
        data: {
            "session_id": sessionID,
-           "question_num": questionNumber
+           "question_num": questionNumber  // Fixme: fix incorrect question number calculation (does not count server-side)
        }
     }).done((data) => {
-        console.log(data);
+        // Show response from server
+        $("#server-response").text(data);
+
+        // Clear the response after 5 seconds
+        setTimeout(() => {
+            $("#server-response").text("");
+        }, 5000);
     });
 });

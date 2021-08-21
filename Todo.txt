@@ -1,4 +1,6 @@
 Todo:
     - Fill in `README.md`
     - Make the Questioner page mobile compatible (it currently looks very ugly)
+    - Display question number (and total question count)
+    - Fix "Session ID 'XXXX' does not exist" if update requests are too frequent
     - Write down rules for Chess Clock Trivia
