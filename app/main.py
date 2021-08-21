@@ -97,20 +97,17 @@ def get_questions_from_session(session_id):
 # VIEWABLE PAGES
 @app.route("/")
 def main_page():
-    print(sessions)
     return render_template("main_page.html")
 
 
 @app.route("/questioner")
 def questioner():
-    print(sessions)
     return render_template("questioner.html")
 
 
 # CODE-ONLY PAGES
 @app.route("/code-only/heartbeat", methods=["POST"])
 def heartbeat():
-    print(sessions)
     # Get the data from the submitted form
     data = request.form
 
@@ -130,13 +127,11 @@ def heartbeat():
 
 @app.route("/code-only/generate-session-id", methods=["POST"])
 def generate_session_id():
-    print(sessions)
     return " ".join(choices(seedWords, k=SEED_LENGTH))
 
 
 @app.route("/code-only/get-questions", methods=["POST"])
 def get_questions():
-    print(sessions)
     # Get the data from the submitted form
     data = request.form
 
@@ -150,7 +145,6 @@ def get_questions():
 
 @app.route("/code-only/set-up-session", methods=["POST"])
 def set_up_session():
-    print(sessions)
     # Get the data from the submitted form
     data = request.form
 
@@ -180,7 +174,7 @@ def set_up_session():
 
 @app.route("/code-only/update-session", methods=["POST"])
 def update_session():
-    print(sessions)
+    print("START", sessions)
     # Get the data from the submitted form
     data = request.form
 
@@ -195,10 +189,10 @@ def update_session():
     # Update session data
     try:
         sessions[data["session_id"]]["current_qn"] = int(data["question_num"])
+        print("END  ", sessions)
+        return "Session updated successfully."
     except ValueError:
         return f"Invalid question number '{data['question_num']}'."
-
-    return "Session updated successfully."
 
 
 # MISCELLANEOUS PAGES
