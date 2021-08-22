@@ -11,22 +11,19 @@ Description: Main flask app file.
 
 # IMPORTS
 import os
-import threading
 from csv import DictReader
-from datetime import datetime, timedelta
-from json import dumps
+from datetime import timedelta
+from json import dumps, loads
 from random import choices, Random
-from time import sleep
 
 from flask import Flask, render_template, send_file, request
+import redis
 
 # CONSTANTS
 TRIVIA_QUESTIONS_FILE = "data/Trivia.csv"
 SEED_WORDS_FILE = "data/seed-words.txt"
 
 SEED_LENGTH = 5  # Number of words in the seed
-
-CHECK_EXPIRY_INTERVAL = 300  # How many seconds between each check of expiry of sessions
 EXPIRY_AFTER = 300  # How many seconds before the session expires (assuming no heartbeat)
 
 # SETUP
@@ -47,50 +44,29 @@ with open(SEED_WORDS_FILE, "r") as f:
 app = Flask(__name__)
 app.logger.setLevel(20)  # 20 = Info
 
-# Set up a dictionary that stores the active sessions
-sessions = {}
+# Connect to the redis sever
+redisDB = redis.from_url(os.getenv("REDIS_URL"))
 
-
-# Create a thread class to check for sessions' expiry
-class CheckSessionExpiryThread(threading.Thread):
-    def run(self):
-        app.logger.info(f"Check session expiry thread started")
-
-        while True:
-            # Wait for a while before actually checking for expiry
-            sleep(CHECK_EXPIRY_INTERVAL)
-
-            # Get a list of session IDs to delete
-            session_id_to_delete = []
-
-            for key, session in sessions.items():
-                if session["expiry"] < datetime.now():
-                    session_id_to_delete.append(key)
-            
-            # Actually delete the sessions
-            for session_id in session_id_to_delete:
-                sessions.pop(session_id)
-                app.logger.info(f"Session '{key}' has expired and was purged")
-
-
-# Start that thread
-checkSessionExpiryThread = CheckSessionExpiryThread(daemon=True)  # Allows it to exit when main program exits
-checkSessionExpiryThread.start()
+# Check if successfully connected
+try:
+    redisDB.ping()
+except redis.exceptions.ConnectionError:
+    raise ConnectionError("Redis server not started yet, or cannot connect to redis server.")
 
 
 # HELPER FUNCTIONS
 def get_questions_from_session(session_id):
     # Check if a session with that ID exists
     try:
-        sessions[session_id]
-    except KeyError:
+        session = loads(redisDB.get(session_id))
+    except TypeError:
         return {"error": f"Session ID '{session_id}' does not exist."}
 
     # Get the first question that should be shown
-    current_qn_index = sessions[session_id]["current_qn"] - 1  # Zero-based indexing
+    current_qn_index = session["current_qn"] - 1  # Zero-based indexing
 
     # Return the questions from the session
-    return {"questions": sessions[session_id]["questions"][current_qn_index:]}
+    return {"questions": session["questions"][current_qn_index:]}
 
 
 # VIEWABLE PAGES
@@ -100,19 +76,8 @@ def main_page():
 
 
 @app.route("/questioner")
-def questioner():  # TODO: Update
-    # Generate a seed based on the words in the `SEED_WORDS_FILE`
-    seed_value = " ".join(choices(seedWords, k=SEED_LENGTH))
-
-    # Initialise the random number generator with that seed
-    random_generator = Random(seed_value)
-
-    # Shuffle the questions
-    questions_copy = questions.copy()
-    random_generator.shuffle(questions_copy)
-
-    # Return the template with the seed value
-    return render_template("questioner.html", seed_value=seed_value, questions=dumps(questions_copy))
+def questioner():
+    return render_template("questioner.html")
 
 
 # CODE-ONLY PAGES
@@ -127,7 +92,7 @@ def heartbeat():
 
     # Update the expiry time in that session
     try:
-        sessions[data["session_id"]]["expiry"] = datetime.now() + timedelta(seconds=EXPIRY_AFTER)
+        redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
     except KeyError:
         return f"Session ID '{data['session_id']}' does not exist so heartbeat failed."
 
@@ -163,7 +128,7 @@ def set_up_session():
         return "The `session_id` must be present!"
 
     # Check if the session does not already exist
-    if data["session_id"] not in sessions:
+    if redisDB.get(data["session_id"]) is None:
         # Initialise the random number generator with that seed
         random_generator = Random(data["session_id"])
 
@@ -172,11 +137,16 @@ def set_up_session():
         random_generator.shuffle(questions_copy)
 
         # Create the session data
-        sessions[data["session_id"]] = {
+        session_data = {
             "questions": questions_copy,
-            "current_qn": 1,
-            "expiry": datetime.now() + timedelta(seconds=EXPIRY_AFTER)
+            "current_qn": 1
         }
+
+        # Push the session data to the redis server
+        redisDB.set(data["session_id"], dumps(session_data))
+
+        # Add an expiry time to that data
+        redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
 
     # Return the questions from the session
     return dumps(get_questions_from_session(data["session_id"]))
@@ -191,18 +161,26 @@ def update_session():
     if "session_id" not in data or "question_num" not in data:
         return "Both the `session_id` and `question_num` must be present!"
 
-    # Check if the session ID is valid
-    if data["session_id"] not in sessions:
-        return f"Session ID '{data['session_id']}' does not exist."
-
     # Update session data
     try:
-        sessions[data["session_id"]]["current_qn"] = int(data["question_num"])
+        # Get the existing session data on the redis server
+        session_data = loads(redisDB.get(data["session_id"]))
+
+        # Modify the data
+        session_data["current_qn"] = int(data["question_num"])
+
+        # Push the modified data back to the redis server
+        redisDB.set(data["session_id"], dumps(session_data))
+
+        # Update expiry time
+        redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
+
+        # Report success
+        return "Session updated successfully."
+    except TypeError:
+        return {"error": f"Session ID '{data['session_id']}' does not exist."}
     except ValueError:
         return f"Invalid question number '{data['question_num']}'."
-
-    # Return OK message
-    return "OK"
 
 
 # MISCELLANEOUS PAGES

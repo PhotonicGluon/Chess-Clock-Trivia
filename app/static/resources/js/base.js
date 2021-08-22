@@ -1,5 +1,5 @@
 // CONSTANTS
-const HEARTBEAT_INTERVAL = 240;  // Every 240 seconds, a heartbeat is sent to the server
+const HEARTBEAT_INTERVAL = 150;  // Every 150 seconds, a heartbeat is sent to the server
 
 // GLOBAL VARIABLES
 let sessionID = null;  // Will need to be updated within the pages

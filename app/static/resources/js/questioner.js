@@ -69,7 +69,7 @@ updateSessionButton.click(() => {
        method: "POST",
        data: {
            "session_id": sessionID,
-           "question_num": questionNumber  // Fixme: fix incorrect question number calculation (does not count server-side)
+           "question_num": questionNumber  // Fixme: fix incorrect question number calculation
        }
     }).done((data) => {
         // Show response from server
