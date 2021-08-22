@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-08-21
+Updated on 2021-08-22
 
 Copyright © Ryan Kan
 
@@ -20,8 +20,9 @@ from flask import Flask, render_template, send_file, request
 import redis
 
 # CONSTANTS
-TRIVIA_QUESTIONS_FILE = "data/Trivia.csv"
+RULES_FILE = "data/rules.md"
 SEED_WORDS_FILE = "data/seed-words.txt"
+TRIVIA_QUESTIONS_FILE = "data/Trivia.csv"
 
 SEED_LENGTH = 5  # Number of words in the seed
 EXPIRY_AFTER = 300  # How many seconds before the session expires (assuming no heartbeat)
@@ -39,6 +40,10 @@ with open(TRIVIA_QUESTIONS_FILE, "r") as f:
 # Get the list of seed words from the `SEED_WORDS_FILE`
 with open(SEED_WORDS_FILE, "r") as f:
     seedWords = [x.strip() for x in f.readlines()]
+
+# Read the rules from the `RULES_FILE`
+with open(RULES_FILE, "r") as f:
+    rulesMD = f.read()  # Markdown text
 
 # Set up the app instance and logging
 app = Flask(__name__)
@@ -78,6 +83,11 @@ def main_page():
 @app.route("/questioner")
 def questioner():
     return render_template("questioner.html")
+
+
+@app.route("/rules")
+def rules():
+    return render_template("rules.html", rules=rulesMD)
 
 
 # CODE-ONLY PAGES

@@ -3,12 +3,13 @@ const HEARTBEAT_INTERVAL = 150;  // Every 150 seconds, a heartbeat is sent to th
 
 // GLOBAL VARIABLES
 let sessionID = null;  // Will need to be updated within the pages
+let heartbeat = null;  // Heartbeat interval object; will be assigned later
 
 // MAIN CODE
 // Code to be run once the document is loaded
 $(document).ready(() => {
     // Set up the heartbeat interval
-    setInterval(() => {
+    heartbeat = setInterval(() => {
         // Call the heartbeat function on the server
         $.ajax({
             url: "/code-only/heartbeat",

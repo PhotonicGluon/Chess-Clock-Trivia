@@ -2,6 +2,6 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$" libraries="{canvas-confetti}" />
-    <file url="PROJECT" libraries="{canvas-confetti, jquery}" />
+    <file url="PROJECT" libraries="{canvas-confetti, jquery, showdown}" />
   </component>
 </project>
