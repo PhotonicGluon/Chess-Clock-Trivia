@@ -5,4 +5,6 @@ Todo:
         - How to run the Redis server
     - Make the Questioner page mobile compatible
     - Display question number (and total question count)
-    - Write down rules for Chess Clock Trivia
+    - Disable buttons once a winner has been decided
+    - Properly validate input
+    - Prevent the clicking of "Update Session on Server" more than once per 5 seconds
