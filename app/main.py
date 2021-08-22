@@ -93,7 +93,6 @@ def heartbeat():
     # Update the expiry time in that session
     try:
         redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
-        # sessions[data["session_id"]]["expiry"] = datetime.now() + timedelta(seconds=EXPIRY_AFTER)
     except KeyError:
         return f"Session ID '{data['session_id']}' does not exist so heartbeat failed."
 

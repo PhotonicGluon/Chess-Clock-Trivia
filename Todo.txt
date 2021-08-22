@@ -3,8 +3,6 @@ Todo:
         - Installation instructions
         - How to run the server
         - How to run the Redis server
-    - Make the Questioner page mobile compatible (it currently looks very ugly)
+    - Make the Questioner page mobile compatible
     - Display question number (and total question count)
-    - Fix "Session ID 'XXXX' does not exist" if update requests are too frequent
-        - Test redis implementation
     - Write down rules for Chess Clock Trivia
