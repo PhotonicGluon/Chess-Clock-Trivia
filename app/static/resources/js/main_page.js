@@ -111,7 +111,7 @@ let topicSpan = $("#topic");
 
 // GLOBAL VARIABLES
 let penaltyTime = 1000;  // 10 seconds, i.e. 1000 hundredths of a second
-let times = [-1, 6000];  // Array to store all times left for all clocks
+let times = [-1, 6000, 6000];  // Array to store all times left for all clocks
 
 let interval = null;  // Interval to handle the decrement of time; will be set once the game starts
 let isPaused = false;  // Flag that says whether the interval is paused or not

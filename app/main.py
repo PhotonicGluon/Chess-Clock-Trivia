@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-08-21
+Updated on 2021-08-22
 
 Copyright © Ryan Kan
 
@@ -16,12 +16,12 @@ from datetime import timedelta
 from json import dumps, loads
 from random import choices, Random
 
-from flask import Flask, render_template, send_file, request
 import redis
+from flask import Flask, render_template, send_file, request
 
 # CONSTANTS
-TRIVIA_QUESTIONS_FILE = "data/Trivia.csv"
 SEED_WORDS_FILE = "data/seed-words.txt"
+TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
 
 SEED_LENGTH = 5  # Number of words in the seed
 EXPIRY_AFTER = 300  # How many seconds before the session expires (assuming no heartbeat)

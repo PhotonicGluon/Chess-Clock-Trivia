@@ -30,7 +30,7 @@
         </div>
 
         <p class="center">
-            Please go <a href="{{ url_for("questioner") }}" target="_blank">here</a> to set up the Questioner side.
+            Head to <a href="{{ url_for("questioner") }}" target="_blank">this page</a> to set up the Questioner side.
         </p>
     </div>
 
@@ -57,6 +57,21 @@
                     <a class="button button-disabled" id="deduct-1" onclick="deductTime(this)">Deduct Time</a>
                 </div>
             </div>
+
+            <div class="clock-area center" id="clock-area-2">
+                <span class="team-name" id="team-name-2" contenteditable>Team 2</span>
+
+                <div class="clock">
+                    <span id="clock-2">01:00</span>
+                </div>
+
+                <div class="clock-area-buttons">
+
+                    <a class="button button-disabled" id="toggle-2" onclick="toggleClock(this)">Resume Clock</a>
+                    <br><br>
+                    <a class="button button-disabled" id="deduct-2" onclick="deductTime(this)">Deduct Time</a>
+                </div>
+            </div>
         </div>
 
         <!-- Questions Area -->
@@ -71,8 +86,8 @@
         <!-- Setup Area -->
         <div class="row center">
             <h2>Number of Players</h2>
-            <label for="num-players"></label><input class="input-field" id="num-players" type="number" min="1"
-                                                    value="1">
+            <label for="num-players"></label><input class="input-field" id="num-players" type="number" min="2"
+                                                    value="2">
             <h2>Time Limit (in seconds)</h2>
             <label for="time-limit"></label><input class="input-field" id="time-limit" type="number" min="1" value="60">
             <h2>Penalty Time (in seconds)</h2>
