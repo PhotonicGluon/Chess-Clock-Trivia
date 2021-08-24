@@ -1,11 +1,11 @@
 // MAIN CODE
 $(document).ready(() => {
-    // Define a ShowDown markdown converter
+    // Disable the heartbeat interval for this page
+    clearInterval(heartbeat);
+
+    // Define the markdown converter
     let converter = new showdown.Converter();
 
-    // Parse the markdown and show the content of the question
+    // Parse the rules and display it
     document.getElementById("rules").innerHTML = converter.makeHtml(RULES);
-
-    // Disable the heartbeat interval
-    clearInterval(heartbeat);
 });

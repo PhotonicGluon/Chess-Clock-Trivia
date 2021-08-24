@@ -8,7 +8,7 @@ let heartbeat = null;  // Heartbeat interval object; will be assigned later
 // MAIN CODE
 // Code to be run once the document is loaded
 $(document).ready(() => {
-    // Set up the heartbeat interval
+    // Set up the heartbeat interval object
     heartbeat = setInterval(() => {
         // Call the heartbeat function on the server
         $.ajax({
@@ -18,5 +18,5 @@ $(document).ready(() => {
         }).done((data) => {
             console.log(data);
         });
-    }, HEARTBEAT_INTERVAL * 1000);  // `timeout` is in ms
+    }, HEARTBEAT_INTERVAL * 1000);  // `timeout` is in milliseconds, so multiply by 1000
 });

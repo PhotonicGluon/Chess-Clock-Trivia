@@ -1,3 +1,31 @@
+// GET ELEMENTS
+let sessionIDInput = $("#session-id");
+let numPlayersInput = $("#num-players");
+let timeLimitInput = $("#time-limit");
+let penaltyTimeInput = $("#penalty-time");
+
+let submitSessionIDButton = $("#submit-session-id");
+let startGameButton = $("#start-game");
+
+let questionSpan = $("#question");
+let questionNumberSpan = $("#question-number");
+let topicSpan = $("#topic");
+
+// GLOBAL VARIABLES
+let penaltyTime = 1000;  // 10 seconds, i.e. 1000 hundredths of a second
+let times = [-1, 6000, 6000];  // Array to store times for all clocks
+
+let initialQuestionNumber = null;  // Initial question number as obtained from the server
+let questionNumber = 1;  // Current (relative) question number
+let questions = null;  // List of questions that will be obtained from the server
+
+let activeTeam = 1;  // The first team's clock will go first
+let eliminatedTeams = [];  // List of eliminated teams that cannot play anymore
+
+let interval = null;  // Interval to handle the decrement of time; will be set once the game starts
+let isPaused = false;  // Whether clock interval is paused
+let gameStarted = false;
+
 // UTILITY FUNCTIONS
 function randomInRange(min, max) {
     return Math.random() * (max - min) + min;
@@ -66,16 +94,15 @@ function confettiFireworks(duration, fireworkInterval) {
     // Create the confetti function on that canvas
     canvas.confetti = canvas.confetti || confetti.create(canvas, {resize: true});
 
-    // Calculate the duration in milliseconds and determine when the animation should end
-    duration *= 1000;
+    // Determine when the animation should end
+    duration *= 1000;  // Duration needs to be in milliseconds
     let animationEnd = Date.now() + duration;
 
-    // Define defaults
+    // Define defaults for the confetti fireworks
     let defaults = {startVelocity: 30, spread: 360, ticks: 60, zIndex: 0};
 
     // Create the interval object that will shoot the fireworks
     let interval = setInterval(function () {
-        // Calculate time left
         let timeLeft = animationEnd - Date.now();
 
         // Stop the animation once time is up
@@ -97,34 +124,6 @@ function confettiFireworks(duration, fireworkInterval) {
         }));
     }, fireworkInterval * 1000);
 }
-
-// GET ELEMENTS
-let sessionIDInput = $("#session-id");
-let numPlayersInput = $("#num-players");
-let timeLimitInput = $("#time-limit");
-let penaltyTimeInput = $("#penalty-time");
-
-let submitSessionIDButton = $("#submit-session-id");
-let startGameButton = $("#start-game");
-
-let questionSpan = $("#question");
-let questionNumberSpan = $("#question-number");
-let topicSpan = $("#topic");
-
-// GLOBAL VARIABLES
-let penaltyTime = 1000;  // 10 seconds, i.e. 1000 hundredths of a second
-let times = [-1, 6000, 6000];  // Array to store all times left for all clocks
-
-let initialQuestionNumber = null;  // Initial question number as obtained from the server
-let questionNumber = 1;  // Current (relative) question number
-let questions = null;  // Variable to store the list of questions that will be obtained from the server
-
-let activeTeam = 1;  // The first team's clock will go first
-let eliminatedTeams = [];  // List of eliminated teams that cannot play anymore
-
-let interval = null;  // Interval to handle the decrement of time; will be set once the game starts
-let isPaused = false;  // Flag that says whether the interval is paused or not
-let gameStarted = false;  // Has the game started?
 
 // MAIN CODE
 // Code to be run once the page is loaded
@@ -463,7 +462,7 @@ function onlyOneRemains(teamNumber) {
     // Update the centre div to reflect that that team won
     $("#question-header").text("We have a winner!");
     questionSpan.text(`Team "${$(`#team-name-${teamNumber}`).text()}" won!`)
-    topicSpan.text("Please refresh the page to play again.");
+    topicSpan.text("Refresh the page to play again.");
 
     // Shoot some fireworks!
     confettiFireworks(10, 0.3);

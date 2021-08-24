@@ -11,30 +11,30 @@ let questionNumberSpan = $("#question-number");
 
 // GLOBAL VARIABLES
 let initialQuestionNumber = null;  // Initial question number as obtained from the server
-let questionNumber = 1;    // Current (relative) question number
+let questionNumber = 1;  // Current (relative) question number
 let questions = null;  // Variable to store the list of questions that will be obtained from the server
 
 // MAIN CODE
 // Code to be run once the user clicks on "Submit Session ID"
 submitSessionIDButton.click(() => {
-    if (sessionIDInput.val() !== "") {
-        // Get the questions
+    if (sessionIDInput.val() !== "") {  // Non-empty session ID
+        // Get the questions from the server
         $.ajax({
             url: "/code-only/get-questions",
             method: "POST",
             data: {"session_id": sessionIDInput.val()},
         }).done((data) => {
-            // Update session ID
+            // Update session ID variable
             sessionID = sessionIDInput.val();
 
-            // Parse the data
+            // Parse the string data as JSON data
             data = JSON.parse(data);
 
             // Check if there are any errors
-            if (data["error"] != null) {
+            if (data["error"] != null) {  // An error was sent along
                 $("#submission-errors").text(data["error"]);
             } else {
-                // Get the initial question number, and update `questions` array
+                // Get the initial question number, and update the `questions` array
                 initialQuestionNumber = data["initial_qn_num"];
                 questions = data["questions"];
 
@@ -49,7 +49,7 @@ submitSessionIDButton.click(() => {
                 $("#main-title").prop("title", `Session ID: ${sessionID}`);
             }
         });
-    } else {
+    } else {  // Session ID is empty
         $("#submission-errors").text("Session ID cannot be empty.");
     }
 });
@@ -71,6 +71,7 @@ getNextQuestionButton.click(() => {
 
 // Code to be run when the user clicks on "Update Session on Server"
 updateSessionButton.click(() => {
+    // Call the update session function on the server
     $.ajax({
         url: "/code-only/update-session",
         method: "POST",
@@ -90,7 +91,7 @@ updateSessionButton.click(() => {
             // Enable the update session button
             updateSessionButton.removeClass("button-disabled");
 
-            // Clear the response
+            // Clear the response text
             $("#server-response").text("");
         }, 3000);
     });

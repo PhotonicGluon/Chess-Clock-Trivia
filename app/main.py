@@ -25,10 +25,9 @@ SEED_WORDS_FILE = "data/seed-words.txt"
 TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
 
 SEED_LENGTH = 5  # Number of words in the seed
-EXPIRY_AFTER = 300  # How many seconds before the session expires (assuming no heartbeat)
+EXPIRY_AFTER = 300  # How many seconds before a session expires (assuming no heartbeat)
 
 # SETUP
-# Change working directory to the `app` directory
 os.chdir("app")
 
 # Get the list of questions from the CSV file
@@ -43,20 +42,18 @@ with open(SEED_WORDS_FILE, "r") as f:
 
 # Read the rules from the `RULES_FILE`
 with open(RULES_FILE, "r") as f:
-    rulesMD = f.read()  # Markdown text
+    rulesMD = f.read()  # The text in the `RULES_FILE` is markdown text
 
-# Set up the app instance and logging
+# Set up the app instance
 app = Flask(__name__)
-app.logger.setLevel(20)  # 20 = Info
 
-# Connect to the redis sever
+# Connect to the redis sever and check if successfully connected
 redisDB = redis.from_url(os.getenv("REDIS_URL"))
 
-# Check if successfully connected
 try:
-    redisDB.ping()
+    redisDB.ping()  # Tries to ping the redis database
 except redis.exceptions.ConnectionError:
-    raise ConnectionError("Redis server not started yet, or cannot connect to redis server.")
+    raise ConnectionError("Cannot connect to redis server. Has the redis server been started yet?")
 
 
 # HELPER FUNCTIONS
@@ -68,7 +65,7 @@ def get_questions_from_session(session_id):
         return {"error": f"Session ID '{session_id}' does not exist."}
 
     # Get the first question that should be shown
-    current_qn_index = session["current_qn"] - 1  # Zero-based indexing
+    current_qn_index = session["current_qn"] - 1  # We want to use zero-based indexing
 
     # Return the questions from the session
     return {"initial_qn_num": session["current_qn"], "questions": session["questions"][current_qn_index:]}
@@ -98,7 +95,7 @@ def heartbeat():
 
     # Ensure that a session ID was sent
     if "session_id" not in data or data["session_id"] == "":
-        return "The `session_id` must be present for the heartbeat to work!"
+        return "The `session_id` must be provided for the heartbeat to work."
 
     # Update the expiry time in that session
     try:
@@ -106,7 +103,6 @@ def heartbeat():
     except KeyError:
         return f"Session ID '{data['session_id']}' does not exist so heartbeat failed."
 
-    # Return success message
     return f"Heartbeat successful for session '{data['session_id']}'."
 
 
@@ -122,7 +118,7 @@ def get_questions():
 
     # Assert that the data contains the needed values
     if "session_id" not in data:
-        return "The `session_id` must be present!"
+        return "The `session_id` must be provided."
 
     # Return the questions from that session
     return dumps(get_questions_from_session(data["session_id"]))
@@ -135,14 +131,14 @@ def set_up_session():
 
     # Ensure that a session ID was sent
     if "session_id" not in data:
-        return "The `session_id` must be present!"
+        return "The `session_id` must be provided."
 
     # Check if the session does not already exist
     if redisDB.get(data["session_id"]) is None:
-        # Initialise the random number generator with that seed
+        # Initialise the random number generator with the session ID
         random_generator = Random(data["session_id"])
 
-        # Shuffle the questions
+        # Shuffle a copy of the `questions` array
         questions_copy = questions.copy()
         random_generator.shuffle(questions_copy)
 
@@ -152,10 +148,8 @@ def set_up_session():
             "current_qn": 1
         }
 
-        # Push the session data to the redis server
+        # Push the session data to the redis server and add an expiry time to said data
         redisDB.set(data["session_id"], dumps(session_data))
-
-        # Add an expiry time to that data
         redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
 
     # Return the questions from the session
@@ -169,7 +163,7 @@ def update_session():
 
     # Ensure that a session ID was sent
     if "session_id" not in data or "question_num" not in data:
-        return "Both the `session_id` and `question_num` must be present!"
+        return "Both the `session_id` and `question_num` must be provided."
 
     # Update session data
     try:
@@ -185,10 +179,14 @@ def update_session():
         # Update expiry time
         redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
 
-        # Report success
+
         return "Session updated successfully."
+    
+    # If reached here then probably the question number provided is of incorrect type
     except TypeError:
         return {"error": f"Session ID '{data['session_id']}' does not exist."}
+    
+    # If reached here then probably the question number is not valid
     except ValueError:
         return f"Invalid question number '{data['question_num']}'."
 
@@ -196,7 +194,7 @@ def update_session():
 # MISCELLANEOUS PAGES
 @app.route("/favicon.ico")
 def favicon():
-    return send_file("static/resources/img/favicon.ico")
+    return send_file("static/resources/img/favicon.ico")  # Access local `favicon.ico` file
 
 
 # MAIN CODE
