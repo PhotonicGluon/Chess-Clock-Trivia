@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-08-22
+Updated on 2021-08-24
 
 Copyright © Ryan Kan
 
@@ -71,18 +71,18 @@ def get_questions_from_session(session_id):
     current_qn_index = session["current_qn"] - 1  # Zero-based indexing
 
     # Return the questions from the session
-    return {"questions": session["questions"][current_qn_index:]}
+    return {"initial_qn_num": session["current_qn"], "questions": session["questions"][current_qn_index:]}
 
 
 # VIEWABLE PAGES
 @app.route("/")
 def main_page():
-    return render_template("main_page.html")
+    return render_template("main_page.html", num_questions=numQuestions)
 
 
 @app.route("/questioner")
 def questioner():
-    return render_template("questioner.html")
+    return render_template("questioner.html", num_questions=numQuestions)
 
 
 @app.route("/rules")

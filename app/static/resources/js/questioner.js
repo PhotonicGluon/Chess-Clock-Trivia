@@ -5,12 +5,14 @@ let getNextQuestionButton = $("#get-next-question");
 let submitSessionIDButton = $("#submit-session-id");
 let updateSessionButton = $("#update-session");
 
-let questionSpan = $("#question");
 let answerSpan = $("#answer");
+let questionSpan = $("#question");
+let questionNumberSpan = $("#question-number");
 
 // GLOBAL VARIABLES
-let questionNumber = 1;
-let questions = null;
+let initialQuestionNumber = null;  // Initial question number as obtained from the server
+let questionNumber = 1;    // Current (relative) question number
+let questions = null;  // Variable to store the list of questions that will be obtained from the server
 
 // MAIN CODE
 // Code to be run once the user clicks on "Submit Session ID"
@@ -32,8 +34,12 @@ submitSessionIDButton.click(() => {
             if (data["error"] != null) {
                 $("#submission-errors").text(data["error"]);
             } else {
-                // Parse the questions and update `questions` array
+                // Get the initial question number, and update `questions` array
+                initialQuestionNumber = data["initial_qn_num"];
                 questions = data["questions"];
+
+                // Update the question number span
+                questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);
 
                 // Show the main div and hide this div
                 $("#main-body").css("display", "block");
@@ -54,7 +60,8 @@ getNextQuestionButton.click(() => {
     let answer = questions[questionNumber - 1]["Answer"];
     let question = questions[questionNumber - 1]["Question"];
 
-    // Update the question and answer spans
+    // Update the question number, question and answer spans
+    questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${TOTAL_NUM_QUESTIONS}`);
     questionSpan.html(question);
     answerSpan.html("Answer: " + answer);
 
@@ -65,12 +72,12 @@ getNextQuestionButton.click(() => {
 // Code to be run when the user clicks on "Update Session on Server"
 updateSessionButton.click(() => {
     $.ajax({
-       url: "/code-only/update-session",
-       method: "POST",
-       data: {
-           "session_id": sessionID,
-           "question_num": questionNumber  // Fixme: fix incorrect question number calculation
-       }
+        url: "/code-only/update-session",
+        method: "POST",
+        data: {
+            "session_id": sessionID,
+            "question_num": initialQuestionNumber + questionNumber - 1
+        }
     }).done((data) => {
         // Show response from server
         $("#server-response").text(data);

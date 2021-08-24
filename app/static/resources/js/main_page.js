@@ -50,7 +50,8 @@ function getNextQuestion(questionNum) {
     let topic = questions[questionNum - 1]["Topic"];
     let question = questions[questionNum - 1]["Question"];
 
-    // Update the question and topic spans
+    // Update the question number, question and topic spans
+    questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${TOTAL_NUM_QUESTIONS}`);
     questionSpan.html(question);
     topicSpan.html("Topic: " + topic);
 
@@ -107,19 +108,23 @@ let submitSessionIDButton = $("#submit-session-id");
 let startGameButton = $("#start-game");
 
 let questionSpan = $("#question");
+let questionNumberSpan = $("#question-number");
 let topicSpan = $("#topic");
 
 // GLOBAL VARIABLES
 let penaltyTime = 1000;  // 10 seconds, i.e. 1000 hundredths of a second
 let times = [-1, 6000, 6000];  // Array to store all times left for all clocks
 
-let interval = null;  // Interval to handle the decrement of time; will be set once the game starts
-let isPaused = false;  // Flag that says whether the interval is paused or not
-let questionNumber = 1;  // Current question number
+let initialQuestionNumber = null;  // Initial question number as obtained from the server
+let questionNumber = 1;  // Current (relative) question number
+let questions = null;  // Variable to store the list of questions that will be obtained from the server
+
 let activeTeam = 1;  // The first team's clock will go first
 let eliminatedTeams = [];  // List of eliminated teams that cannot play anymore
+
+let interval = null;  // Interval to handle the decrement of time; will be set once the game starts
+let isPaused = false;  // Flag that says whether the interval is paused or not
 let gameStarted = false;  // Has the game started?
-let questions = null;  // Structure to store the questions
 
 // MAIN CODE
 // Code to be run once the page is loaded
@@ -149,8 +154,12 @@ submitSessionIDButton.click(() => {
             // Parse the data
             data = JSON.parse(data);
 
-            // Parse the questions and update `questions` array
+            // Get the initial question number, and update `questions` array
+            initialQuestionNumber = data["initial_qn_num"];
             questions = data["questions"];
+
+            // Update the question number span
+            questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);
 
             // Show the main div and hide this div
             $("#main-body").css("display", "block");

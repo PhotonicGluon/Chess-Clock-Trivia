@@ -10,6 +10,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 {% endblock %}
 
+{% block header_scripts %}
+    <script>
+        let TOTAL_NUM_QUESTIONS = {{ num_questions }};
+    </script>
+{% endblock %}
+
 {% block content %}
     <!-- This will be shown first -->
     <div class="center-screen" id="session-id-entering-modal">
@@ -79,7 +85,7 @@
         <!-- Questions Area -->
         <hr>
         <div class="row center">
-            <h2 style="text-decoration: underline;" id="question-header">Question</h2>
+            <h2 style="text-decoration: underline;" id="question-header">Question <span id="question-number"></span></h2>
             <span id="question">Start the game to get the first question.</span><br>
             <span id="topic">This is the topic of the current question.</span>
         </div>

@@ -6,6 +6,12 @@
     <link rel="stylesheet" href="{{ url_for("static", filename="resources/css/questioner.css") }}">
 {% endblock %}
 
+{% block header_scripts %}
+    <script>
+        let TOTAL_NUM_QUESTIONS = {{ num_questions }};
+    </script>
+{% endblock %}
+
 {% block content %}
     <!-- This will be shown first -->
     <div class="center-screen" id="session-id-entering-modal">
@@ -33,7 +39,7 @@
         <div>
             <hr>
             <div class="row center">
-                <h2 style="text-decoration: underline;">Question</h2>
+                <h2 style="text-decoration: underline;">Question <span id="question-number"></span></h2>
                 <span id="question">Click the button below to get the first question.</span><br>
                 <span id="answer">This will be the answer to the question.</span>
                 <br><br>
