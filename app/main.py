@@ -22,7 +22,7 @@ from flask import Flask, render_template, send_file, request
 # CONSTANTS
 RULES_FILE = "data/rules.md"
 SEED_WORDS_FILE = "data/seed-words.txt"
-TRIVIA_QUESTIONS_FILE = "data/Trivia.csv"
+TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
 
 SEED_LENGTH = 5  # Number of words in the seed
 EXPIRY_AFTER = 300  # How many seconds before the session expires (assuming no heartbeat)
