@@ -310,6 +310,36 @@ function toggleClock(button) {
     }
 }
 
+// Code to handle team elimination
+function handleTeamElimination() {
+    // Stop the countdown
+    isPaused = true;
+
+    // Change the colour of the clock text to red
+    $(`#clock-${activeTeam}`).css("color", "red");
+
+    // Disable the buttons of that team
+    $(`#toggle-${activeTeam}`).addClass("button-disabled");
+    $(`#deduct-${activeTeam}`).addClass("button-disabled");
+
+    // Add this team to the list of eliminated teams
+    eliminatedTeams.push(activeTeam);
+
+    // Change the active team to the next possible team
+    let numPlayers = getNumClocks();
+
+    for (let i = activeTeam; i < activeTeam + numPlayers; i++) {
+        // Generate the team number
+        let teamNumber = i % numPlayers + 1;
+
+        // Check if the team is not eliminated
+        if (!eliminatedTeams.includes(teamNumber)) {
+            // Set that team to be the new active team
+            activeTeam = teamNumber;
+        }
+    }
+}
+
 // Code to be run when the "Deduct Time" button is pressed
 function deductTime(button) {
     // Check if the button is active
@@ -324,12 +354,18 @@ function deductTime(button) {
         let clock = $(`#clock-${teamNumber}`);
 
         // Deduct time from the clock of that team
-        if (times[teamNumber] - penaltyTime <= 0) {
+        if (times[teamNumber] - penaltyTime <= 0) {  // Ran out of time
             // Set the time to zero
             times[teamNumber] = 0
 
-            // Change the colour of that clock's text to red
-            clock.css("color", "red");
+            // Handle that team's elimination
+            handleTeamElimination();
+
+            // Check how many teams are active now
+            if (eliminatedTeams.length === getNumClocks() - 1) {
+                // Only that team remains
+                onlyOneRemains(activeTeam);  // This is the new active team
+            }
 
         } else {
             // Since the time does not go below zero, it is safe to just subtract the time
@@ -346,10 +382,12 @@ function handlePause() {
     // Get the number of players
     let numPlayers = getNumClocks();
 
-    // Set all toggle clock buttons to be active
+    // Enable all non-eliminated teams' buttons
     for (let i = 1; i <= numPlayers; i++) {
-        $(`#toggle-${i}`).removeClass("button-disabled");
-        $(`#deduct-${i}`).removeClass("button-disabled");
+        if (!eliminatedTeams.includes(i)) {
+            $(`#toggle-${i}`).removeClass("button-disabled");
+            $(`#deduct-${i}`).removeClass("button-disabled");
+        }
     }
 }
 
@@ -364,38 +402,15 @@ startGameButton.click(() => {
                 // Update active team's time left
                 let timeLeft = --times[activeTeam];  // Decrement time first before getting the value
 
-                // Get the clock element
-                let activeClock = $(`#clock-${activeTeam}`);
-
                 // Check if time limit exceeded
                 if (timeLeft < 0) {
-                    // Stop the countdown
-                    isPaused = true;
-
-                    // Change the colour of the clock text to red
-                    activeClock.css("color", "red");
-
-                    // Add this team to the list of eliminated teams
-                    eliminatedTeams.push(activeTeam);
-
-                    // Change the active team to the next possible team
-                    let numPlayers = getNumClocks();
-
-                    for (let i = activeTeam; i < activeTeam + numPlayers; i++) {
-                        // Generate the team number
-                        let teamNumber = i % numPlayers + 1;
-
-                        // Check if the team is not eliminated
-                        if (!eliminatedTeams.includes(teamNumber)) {
-                            // Set that team to be the new active team
-                            activeTeam = teamNumber;
-                        }
-                    }
+                    // Handle that team's elimination
+                    handleTeamElimination();
 
                     // Check how many teams are active now
                     if (eliminatedTeams.length === getNumClocks() - 1) {
                         // Only that team remains
-                        onlyOneRemains(activeTeam);
+                        onlyOneRemains(activeTeam);  // This is the new active team
                     } else {
                         // Handle the pause that just occurred
                         handlePause();
@@ -403,7 +418,7 @@ startGameButton.click(() => {
 
                 } else {
                     // Update clock text
-                    activeClock.text(displayTime(timeLeft));
+                    $(`#clock-${activeTeam}`).text(displayTime(timeLeft));
                 }
             }
         }, 10);  // Interval is called every 10 ms
@@ -436,6 +451,14 @@ function onlyOneRemains(teamNumber) {
 
     // Highlight that team's clock in green
     $(`#clock-${teamNumber}`).css("color", "green")
+
+    // Disable all players' buttons
+    let numPlayers = getNumClocks();
+
+    for (let i = 1; i <= numPlayers; i++) {
+        $(`#toggle-${i}`).addClass("button-disabled");
+        $(`#deduct-${i}`).addClass("button-disabled");
+    }
 
     // Update the centre div to reflect that that team won
     $("#question-header").text("We have a winner!");

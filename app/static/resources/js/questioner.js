@@ -82,9 +82,16 @@ updateSessionButton.click(() => {
         // Show response from server
         $("#server-response").text(data);
 
-        // Clear the response after 5 seconds
+        // Disable the update session button
+        updateSessionButton.addClass("button-disabled");
+
+        // Wait for 3 seconds
         setTimeout(() => {
+            // Enable the update session button
+            updateSessionButton.removeClass("button-disabled");
+
+            // Clear the response
             $("#server-response").text("");
-        }, 5000);
+        }, 3000);
     });
 });
