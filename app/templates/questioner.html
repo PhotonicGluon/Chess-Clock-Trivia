@@ -22,7 +22,7 @@
             <label for="session-id"></label><input class="center" id="session-id" type="text"
                                                    placeholder="Enter a session ID here"><br>
             <a class="button" id="submit-session-id">Submit Session ID</a><br><br>
-            <span id="submission-errors"></span>
+            <span class="error-text" id="submission-errors"></span>
 
             <p class="center">
                 Please go <a href="{{ url_for("rules") }}" target="_blank">here</a> to obtain the protocols that
@@ -47,7 +47,6 @@
             </div>
             <hr>
         </div>
-
 
         <!-- Update session on server section -->
         <div class="row center">

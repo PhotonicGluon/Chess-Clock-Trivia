@@ -32,7 +32,8 @@
             <h2>Session ID</h2>
             <label for="session-id"></label><input class="center" id="session-id" type="text"
                                                    placeholder="Enter a session ID here"><br>
-            <a class="button" id="submit-session-id">Submit Session ID</a>
+            <a class="button" id="submit-session-id">Submit Session ID</a><br><br>
+            <span class="error-text" id="submission-errors"></span>
         </div>
 
         <p class="center">
@@ -102,7 +103,8 @@
             <label for="penalty-time"></label><input class="input-field" id="penalty-time" type="number" min="1"
                                                      value="10">
             <br><br>
-            <a class="button" id="start-game">Start The Game!</a>
+            <a class="button" id="start-game">Start The Game!</a><br><br>
+            <span class="error-text" id="validation-errors"></span>
         </div>
     </div>
 {% endblock %}

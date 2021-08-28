@@ -50,3 +50,7 @@
     font-size: 14pt;
     color: #777;
 }
+
+#validation-errors ul {
+    list-style-type: none;
+}

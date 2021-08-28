@@ -1,3 +1,13 @@
+// CONSTANTS
+const MIN_PLAYERS = 2;
+const MAX_PLAYERS = 4;
+
+const MIN_TIME = 10;  // In seconds
+const MAX_TIME = 3600;  // 1 hour
+
+const MIN_PENALTY_TIME = 1;  // 1 second
+const MAX_PENALTY_TIME = 20;  // 20 seconds
+
 // GET ELEMENTS
 let sessionIDInput = $("#session-id");
 let numPlayersInput = $("#num-players");
@@ -167,6 +177,8 @@ submitSessionIDButton.click(() => {
             // Make the session ID appear when hovering over the title
             $("#main-title").prop("title", `Session ID: ${sessionID}`);
         });
+    } else {  // Session ID is empty
+        $("#submission-errors").text("Session ID cannot be empty.");
     }
 });
 
@@ -394,52 +406,102 @@ function handlePause() {
 startGameButton.click(() => {
     // Check if the game started already
     if (!gameStarted) {
-        // Create the interval object
-        interval = setInterval(() => {
-            // Check if not paused
-            if (!isPaused) {
-                // Update active team's time left
-                let timeLeft = --times[activeTeam];  // Decrement time first before getting the value
+        // Clear the validation error message box
+        let validationErrors = $("#validation-errors")
+        validationErrors.html("");
 
-                // Check if time limit exceeded
-                if (timeLeft < 0) {
-                    // Handle that team's elimination
-                    handleTeamElimination();
+        // Declare variables for the validation of data
+        let validData = true;
+        let errorMsg = "There were errors:<ul>";  // Will be modified along the way
 
-                    // Check how many teams are active now
-                    if (eliminatedTeams.length === getNumClocks() - 1) {
-                        // Only that team remains
-                        onlyOneRemains(activeTeam);  // This is the new active team
-                    } else {
-                        // Handle the pause that just occurred
-                        handlePause();
-                    }
+        // Get the data that was entered
+        let numPlayers, timeLimit, penaltyTime;
 
-                } else {
-                    // Update clock text
-                    $(`#clock-${activeTeam}`).text(displayTime(timeLeft));
-                }
+        try {
+            numPlayers = parseInt(numPlayersInput.val());
+            timeLimit = parseInt(timeLimitInput.val());
+            penaltyTime = parseInt(penaltyTimeInput.val());
+        } catch (e) {  // Occurs if there are invalid data types for the integer
+            validData = false;
+            errorMsg = e.text();
+        }
+
+        // Validate data
+        if (validData) {
+            if (!(MIN_PLAYERS <= numPlayers && numPlayers <= MAX_PLAYERS)) {
+                validData = false;
+                errorMsg += `<li>Number of players should be between ${MIN_PLAYERS} and ${MAX_PLAYERS} inclusive.</li>`;
             }
-        }, 10);  // Interval is called every 10 ms
 
-        // Disable the "Start The Game!" button
-        startGameButton.addClass("button-disabled");
+            if (!(MIN_TIME <= timeLimit && timeLimit <= MAX_TIME)) {
+                validData = false;
+                errorMsg += `<li>Time limit should be between ${MIN_TIME} seconds and ${MAX_TIME} seconds inclusive.
+                             </li>`;
+            }
 
-        // Disable input fields
-        numPlayersInput.prop("disabled", true);
-        timeLimitInput.prop("disabled", true);
-        penaltyTimeInput.prop("disabled", true);
+            if (!(MIN_PENALTY_TIME <= penaltyTime && penaltyTime <= MAX_PENALTY_TIME)) {
+                validData = false;
+                errorMsg += `<li>Penalty time should be between ${MIN_PENALTY_TIME} seconds and ${MAX_PENALTY_TIME} 
+                             seconds inclusive.</li>`;
+            }
+        }
 
-        // Enable the active clock's team's "Toggle Clock" button and change the text on it
-        let toggleClockButton = $(`#toggle-${activeTeam}`);
-        toggleClockButton.removeClass("button-disabled");
-        toggleClockButton.text("Pause Clock");
+        // Check if the data is valid
+        if (validData) {
+            // Create the interval object
+            interval = setInterval(() => {
+                // Check if not paused
+                if (!isPaused) {
+                    // Update active team's time left
+                    let timeLeft = --times[activeTeam];  // Decrement time first before getting the value
 
-        // Update the `gameStarted` flag
-        gameStarted = true;
+                    // Check if time limit exceeded
+                    if (timeLeft < 0) {
+                        // Handle that team's elimination
+                        handleTeamElimination();
 
-        // Get the first question
-        getNextQuestion(questionNumber);
+                        // Check how many teams are active now
+                        if (eliminatedTeams.length === getNumClocks() - 1) {
+                            // Only that team remains
+                            onlyOneRemains(activeTeam);  // This is the new active team
+                        } else {
+                            // Handle the pause that just occurred
+                            handlePause();
+                        }
+
+                    } else {
+                        // Update clock text
+                        $(`#clock-${activeTeam}`).text(displayTime(timeLeft));
+                    }
+                }
+            }, 10);  // Interval is called every 10 ms
+
+            // Disable the "Start The Game!" button
+            startGameButton.addClass("button-disabled");
+
+            // Disable input fields
+            numPlayersInput.prop("disabled", true);
+            timeLimitInput.prop("disabled", true);
+            penaltyTimeInput.prop("disabled", true);
+
+            // Enable the active clock's team's "Toggle Clock" button and change the text on it
+            let toggleClockButton = $(`#toggle-${activeTeam}`);
+            toggleClockButton.removeClass("button-disabled");
+            toggleClockButton.text("Pause Clock");
+
+            // Update the `gameStarted` flag
+            gameStarted = true;
+
+            // Get the first question
+            getNextQuestion(questionNumber);
+
+        } else {  // Data invalid
+            // Close the list in the error message
+            errorMsg += "</ul>";
+
+            // Show the final validation error message
+            validationErrors.html(errorMsg);
+        }
     }
 });
 

@@ -5,6 +5,3 @@ Todo:
         - How to run the Redis server
     - Make the Questioner page mobile compatible
     - Make the Enter/Return key automatically click on buttons
-
-Fixme:
-    - Properly validate input

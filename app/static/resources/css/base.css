@@ -60,3 +60,9 @@ input {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+.error-text {
+    margin-top: 2px;
+    color: #f00;
+    font-size: 14pt;
+}
