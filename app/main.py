@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-08-24
+Updated on 2021-08-28
 
 Copyright © Ryan Kan
 
@@ -28,7 +28,7 @@ SEED_LENGTH = 5  # Number of words in the seed
 EXPIRY_AFTER = 300  # How many seconds before a session expires (assuming no heartbeat)
 
 # SETUP
-os.chdir("app")
+os.chdir("app")  # Make current working directory the app directory
 
 # Get the list of questions from the CSV file
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
@@ -179,13 +179,12 @@ def update_session():
         # Update expiry time
         redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
 
-
         return "Session updated successfully."
-    
+
     # If reached here then probably the question number provided is of incorrect type
     except TypeError:
         return {"error": f"Session ID '{data['session_id']}' does not exist."}
-    
+
     # If reached here then probably the question number is not valid
     except ValueError:
         return f"Invalid question number '{data['question_num']}'."

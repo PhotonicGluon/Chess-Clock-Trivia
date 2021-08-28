@@ -15,6 +15,15 @@ let questionNumber = 1;  // Current (relative) question number
 let questions = null;  // Variable to store the list of questions that will be obtained from the server
 
 // MAIN CODE
+// Code to be run once the user presses Enter/Return whilst on the "Enter Session ID" field
+sessionIDInput.keyup((event) => {
+    if (event.which === 13) {  // Key pressed was the Enter/Return key
+        // Click on the submit session ID button
+        event.preventDefault();
+        submitSessionIDButton.click();
+    }
+});
+
 // Code to be run once the user clicks on "Submit Session ID"
 submitSessionIDButton.click(() => {
     if (sessionIDInput.val() !== "") {  // Non-empty session ID

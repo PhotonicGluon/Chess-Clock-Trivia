@@ -148,6 +148,15 @@ $(document).ready(() => {
     });
 });
 
+// Code to be run once the user presses Enter/Return whilst on the "Enter Session ID" field
+sessionIDInput.keyup((event) => {
+    if (event.which === 13) {  // Key pressed was the Enter/Return key
+        // Click on the submit session ID button
+        event.preventDefault();
+        submitSessionIDButton.click();
+    }
+});
+
 // Code to be run once the user clicks on "Submit Seed Value"
 submitSessionIDButton.click(() => {
     if (sessionIDInput.val() !== "") {
