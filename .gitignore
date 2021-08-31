@@ -116,3 +116,5 @@ dmypy.json
 # Others
 .DS_Store
 dump.rdb
+
+others

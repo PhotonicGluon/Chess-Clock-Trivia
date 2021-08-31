@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-08-28
+Updated on 2021-08-31
 
 Copyright © Ryan Kan
 
@@ -26,9 +26,6 @@ TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
 
 SEED_LENGTH = 5  # Number of words in the seed
 EXPIRY_AFTER = 300  # How many seconds before a session expires (assuming no heartbeat)
-
-# SETUP
-os.chdir("app")  # Make current working directory the app directory
 
 # Get the list of questions from the CSV file
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
