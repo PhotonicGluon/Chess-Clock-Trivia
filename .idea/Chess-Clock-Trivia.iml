@@ -10,6 +10,7 @@
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="canvas-confetti" level="application" />
     <orderEntry type="library" name="showdown" level="application" />
+    <orderEntry type="library" name="less" level="application" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="GOOGLE" />

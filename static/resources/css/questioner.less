@@ -1,0 +1,35 @@
+/* ELEMENT-BASED STYLING */
+#answer {
+    color: #333;
+    font-size: 12pt;
+}
+
+#get-next-question {
+    position: absolute;
+    bottom: 0;
+    transform: translate(-50%);
+}
+
+#question {
+    font-size: 18pt;
+}
+
+#question-area {
+    height: 30vh;
+    position: relative;
+}
+
+/* MEDIA QUERIES */
+@media screen and (max-width: 900px) {  /* Especially for mobile browsers */
+    #main-body {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+    }
+
+    #question-area {
+        height: 50vh;
+    }
+}

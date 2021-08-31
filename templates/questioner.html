@@ -3,7 +3,8 @@
 {% block title %}Chess Clock Trivia - Questioner{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for("static", filename="resources/css/questioner.css") }}">
+    <link rel="stylesheet/less" type="text/css"
+          href="{{ url_for("static", filename="resources/css/questioner.less") }}">
 {% endblock %}
 
 {% block header_scripts %}
@@ -38,8 +39,8 @@
         <!-- Questions Area -->
         <div>
             <hr>
-            <div class="row center">
-                <h2 style="text-decoration: underline;">Question <span id="question-number"></span></h2>
+            <div class="row center" id="question-area">
+                <h2 class="question-header">Question <span id="question-number"></span></h2>
                 <span id="question">Click the button below to get the first question.</span><br>
                 <span id="answer">This will be the answer to the question.</span>
                 <br><br>

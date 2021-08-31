@@ -1,56 +1,58 @@
 /* CLASS-BASED STYLING */
 .clock {
-    font-size: 36pt;
-    font-weight: bold;
-    border: 2px solid black;
-    padding: 4px;
+  font-size: 36pt;
+  font-weight: bold;
+  border: 2px solid black;
+  padding: 4px;
 }
-
 .clock-area-buttons {
-    flex: 1;
+  flex: 1;
 }
-
 .input-field {
-    text-align: center;
-    width: 25%;
+  text-align: center;
+  width: 25%;
 }
-
 .small {
-    font-size: 12pt;
+  font-size: 12pt;
 }
-
 .team-name {
-    width: auto;
-    display: block;
-    margin: 4px;
-    font-size: 18pt;
+  width: auto;
+  display: block;
+  margin: 4px;
+  font-size: 18pt;
 }
-
 /* ELEMENT-BASED STYLING */
 #clocks-area {
-    display: flex;
+  display: flex;
 }
-
 #confetti-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    max-width: 100vw !important;
-    pointer-events: none;
-    z-index: 100;
-    width: 100vw;
-    height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  max-width: 100vw !important;
+  pointer-events: none;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
 }
-
+#mobile-warning {
+  display: none;
+}
 #question {
-    font-size: 18pt;
+  font-size: 18pt;
 }
-
 #topic {
-    font-size: 14pt;
-    color: #777;
+  font-size: 14pt;
+  color: #777;
 }
-
 #validation-errors ul {
-    list-style-type: none;
+  list-style-type: none;
 }
+/* MEDIA QUERIES */
+@media screen and (max-width: 900px) {
+  /* Especially for mobile browsers */
+  #mobile-warning {
+    display: block;
+  }
+}
+/*# sourceMappingURL=main_page.css.map */

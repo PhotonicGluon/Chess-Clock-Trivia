@@ -1,11 +1,13 @@
 # Chess Clock Trivia
 
+Chess Clock Trivia is a trivia game where contestants answer questions within a certain time limit.
+
 ## Installation
 Todo: write installation instructions.
 - Need redis
 
 ## Credits
-Chess Clock Trivia's webpage's favicon was generated using the following graphics from Twitter Twemoji:
+Chess Clock Trivia's webpage's icon and favicon was generated using the following graphics from Twitter Twemoji:
 
 - Graphics Title: 23f2.svg
 - Graphics Author: Copyright 2020 Twitter, Inc and other contributors (https://github.com/twitter/twemoji)

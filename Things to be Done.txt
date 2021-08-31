@@ -3,4 +3,3 @@ Todo:
         - Installation instructions
         - How to run the server
         - How to run the Redis server
-    - Make the Questioner page mobile compatible

@@ -3,7 +3,7 @@
 {% block title %}Chess Clock Trivia{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for("static", filename="resources/css/main_page.css") }}">
+    <link rel="stylesheet/less" type="text/css" href="{{ url_for("static", filename="resources/css/main_page.less") }}">
 {% endblock %}
 
 {% block vendor_scripts %}
@@ -20,6 +20,8 @@
     <!-- This will be shown first -->
     <div class="center-screen" id="session-id-entering-modal">
         <h1>Chess Clock Trivia</h1>
+        <span class="center error-text" id="mobile-warning">It is recommended to access the main page using a
+            device with a larger screen width.<br><br></span>
         <p class="center">
             A suggested session ID is<br>
             <code id="session-id-span">{{ seed_value }}</code><br>
@@ -86,7 +88,7 @@
         <!-- Questions Area -->
         <hr>
         <div class="row center">
-            <h2 style="text-decoration: underline;" id="question-header">Question <span id="question-number"></span></h2>
+            <h2 class="question-header" id="question-header">Question <span id="question-number"></span></h2>
             <span id="question">Start the game to get the first question.</span><br>
             <span id="topic">This is the topic of the current question.</span>
         </div>
