@@ -41,7 +41,7 @@ submitSessionIDButton.click(() => {
 
             // Check if there are any errors
             if (data["error"] != null) {  // An error was sent along
-                $("#submission-errors").text(data["error"]);
+                $("#submission-errors").html(data["error"]);
             } else {
                 // Get the initial question number, and update the `questions` array
                 initialQuestionNumber = data["initial_qn_num"];

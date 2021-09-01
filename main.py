@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-08-31
+Updated on 2021-09-01
 
 Copyright © Ryan Kan
 
@@ -59,7 +59,7 @@ def get_questions_from_session(session_id):
     try:
         session = loads(redisDB.get(session_id))
     except TypeError:
-        return {"error": f"Session ID '{session_id}' does not exist."}
+        return {"error": f"Session ID '<code>{session_id}</code>' does not exist."}
 
     # Get the first question that should be shown
     current_qn_index = session["current_qn"] - 1  # We want to use zero-based indexing

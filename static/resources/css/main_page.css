@@ -12,6 +12,13 @@
   text-align: center;
   width: 25%;
 }
+.question-header {
+  text-decoration: underline;
+}
+.session-id {
+  font-size: 18pt;
+  color: #d63384;
+}
 .small {
   font-size: 12pt;
 }

@@ -1,3 +1,7 @@
+/* CLASS-BASED STYLING */
+.question-header {
+  text-decoration: underline;
+}
 /* ELEMENT-BASED STYLING */
 #answer {
   color: #333;

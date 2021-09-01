@@ -6,10 +6,7 @@
 }
 
 code {
-    font-size: 18pt;
-    color: #d63384;
-    word-wrap: break-word;
-    font-family: "Courier New", "Courier", "Source Code Pro", monospace;
+    .code-like();
 }
 
 div {
@@ -62,18 +59,19 @@ input {
     width: 50%;
 }
 
+.code-like {
+    word-wrap: break-word;
+    font-family: "Courier New", "Courier", "Source Code Pro", monospace;
+}
+
 .error-text {
     margin-top: 2px;
     color: #f00;
     font-size: 14pt;
 }
 
-.question-header {
-    text-decoration: underline;
-}
-
 /* MEDIA QUERIES */
-@media screen and (max-width: 900px) {  /* Especially for mobile browsers */
+@media screen and (max-width: 900px) {
     .center-screen {
         width: 90%;
     }

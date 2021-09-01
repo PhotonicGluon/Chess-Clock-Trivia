@@ -1,5 +1,10 @@
 Todo:
     - Fill in `README.md`
+        - Banner/Logo image
         - Installation instructions
         - How to run the server
         - How to run the Redis server
+    - Add footer with the copyright notice
+    - Add credits/licences page
+        - Credits like the seed words document (from bitcoin)
+    - Update trivia questions
