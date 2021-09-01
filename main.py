@@ -20,6 +20,7 @@ import redis
 from flask import Flask, render_template, send_file, request
 
 # CONSTANTS
+CREDITS_FILE = "data/credits.md"
 RULES_FILE = "data/rules.md"
 SEED_WORDS_FILE = "data/seed-words.txt"
 TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
@@ -27,7 +28,7 @@ TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
 SEED_LENGTH = 5  # Number of words in the seed
 EXPIRY_AFTER = 300  # How many seconds before a session expires (assuming no heartbeat)
 
-# Get the list of questions from the CSV file
+# Get the list of questions from the `TRIVIA_QUESTIONS_FILE`
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
     csvReader = DictReader(f)
     questions = [line for line in csvReader]
@@ -40,6 +41,10 @@ with open(SEED_WORDS_FILE, "r") as f:
 # Read the rules from the `RULES_FILE`
 with open(RULES_FILE, "r") as f:
     rulesMD = f.read()  # The text in the `RULES_FILE` is markdown text
+
+# Read the credits/licences from the `CREDITS_FILE`
+with open(CREDITS_FILE, "r") as f:
+    creditsMD = f.read()  # The text in the `RULES_FILE` is markdown text
 
 # Set up the app instance
 app = Flask(__name__)
@@ -82,6 +87,11 @@ def questioner():
 @app.route("/rules")
 def rules():
     return render_template("rules.html", rules=rulesMD)
+
+
+@app.route("/credits")
+def credits_page():
+    return render_template("credits.html", credits=creditsMD)
 
 
 # CODE-ONLY PAGES

@@ -7,13 +7,13 @@ li {
   margin-top: 0.25em;
 }
 /* ELEMENT-BASED STYLING */
-#rules {
+#credits-area {
   text-align: justify;
 }
 /* MEDIA QUERIES */
 @media screen and (max-width: 900px) {
-  #rules {
+  #credits-area {
     margin: 5vw;
   }
 }
-/*# sourceMappingURL=rules.css.map */
+/*# sourceMappingURL=credits.css.map */

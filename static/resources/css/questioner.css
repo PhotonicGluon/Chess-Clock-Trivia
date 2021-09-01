@@ -21,7 +21,6 @@
 }
 /* MEDIA QUERIES */
 @media screen and (max-width: 900px) {
-  /* Especially for mobile browsers */
   #main-body {
     position: fixed;
     top: 50%;

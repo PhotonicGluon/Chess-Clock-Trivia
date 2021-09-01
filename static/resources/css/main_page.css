@@ -57,7 +57,6 @@
 }
 /* MEDIA QUERIES */
 @media screen and (max-width: 900px) {
-  /* Especially for mobile browsers */
   #mobile-warning {
     display: block;
   }
