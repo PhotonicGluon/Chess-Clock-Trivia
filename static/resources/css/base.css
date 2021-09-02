@@ -23,6 +23,9 @@ input {
   width: 90%;
   height: auto;
 }
+var {
+  font-family: serif;
+}
 /* BUTTON STYLING */
 .button {
   border: 2px solid black;

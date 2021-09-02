@@ -62,7 +62,7 @@ Biology,With what process do living creatures make more of themselves?,Reproduct
 Chemistry,"""Dihydrogen monoxide"" is also known as what?",Water
 Chemistry,"""Sodium Bicarbonate"" is the chemical name of which common baking ingredient?",Baking Soda
 Chemistry,Count Alessandro Volta is credited with the creation of what commonplace item?,Battery
-Chemistry,"Fill in the blank: the ""H3O+"" ion is called the  _________ ion.",Hydronium
+Chemistry,Fill in the blank: the H<sub>3</sub>O<sup>+</sup> ion is called the  _________ ion.,Hydronium
 Chemistry,How many carbon atoms does a molecule of butylene (or butene) contain?,4 carbon atoms
 Chemistry,"In chemistry, what does ""K<sub>sp</sub>"" mean?",Solubility of solid substance / Solubility product constant
 Chemistry,Name two of the three metals that are definitely liquid at 30°C.,"Mercury, Gallium, and Caesium"
@@ -71,8 +71,8 @@ Chemistry,"The chemical symbol ""Pb"" stands for which element?",Lead
 Chemistry,What element did Marie Curie discover?,Radium
 Chemistry,What is <em>plumbum</em>?,Lead (Pb)
 Chemistry,What is another name for petroleum?,(Crude) Oil
-Chemistry,"What is another name for the H+ ion (other than ""hydrogen ion"")?",Proton
-Chemistry,What is the chemical name of a molecule with the chemical formula CH3CHOHCH3?,"Isopropyl alcohol, propan-2-ol, isopropanol, or 2-propanol"
+Chemistry,"What is another name for the H<sup>+</sup> ion (other than ""hydrogen ion"")?",Proton
+Chemistry,What is the chemical name of a molecule with the chemical formula CH<sub>3</sub>CHOHCH<sub>3</sub>?,"Isopropyl alcohol, propan-2-ol, isopropanol, or 2-propanol"
 Chemistry,What is the chemical symbol for Barium?,Ba
 Chemistry,What is the chemical symbol for Caesium?,Cs
 Chemistry,What is the chemical symbol of Yttrium?,Y
@@ -202,7 +202,7 @@ Mathematics,What is the name of a line that intersects a circle at exactly <b>tw
 Mathematics,What is the next prime number after 19?,23
 Mathematics,What is the only integer that has the same number of letters as it’s meaning?,The number 4 (four)
 Mathematics,"What is the only prime number that doesn't have the letter ""e"" in its name?",2
-Mathematics,"What mathematical field is literally translated as ""small-product-distribution-study"" in Chinese?",Calculus (微积分学}
+Mathematics,"What mathematical field is literally translated as ""small-product-distribution-study"" in Chinese?",Calculus (微积分学)
 Mathematics,"What number does the roman numerals ""XVI"" represent?",16
 Mathematics,"Which mathematical area was once called <em>al-jabr</em> in Arabic and literally means ""reunion of broken parts""?",Algebra
 Mathematics,Which mathematician created the cartesian axes?,(René) Descartes
@@ -215,7 +215,7 @@ Other,"Fill in the missing word in this famous quote: ""The problem with politic
 Other,How many cards are there in a standard deck of playing cards (excluding jokers)?,52 cards
 Other,"I contain appearances by Shakespearean characters, 4 other men, a father, an American and an African. What am I?",NATO Phonetic Alphabet
 Other,"If Air Traffic Control tells you ""Delta 135, squawk 3141"", what should you respond with?","Respond with ""Squawk 3141, Delta 135"""
-Other,"In aviation, how fast is an object travelling at 1 knot going (give your answer in terms of nautical miles per hour)?",1 nautical mile per hour
+Other,"In aviation, how fast is an object travelling at 1 knot going? Give your answer in terms of nautical miles per hour.",1 nautical mile per hour
 Other,"In aviation, what does the squawk code 7500 mean?",Hijacking / Unlawful Interference
 Other,"In aviation, what is Zulu time (e.g. 1330 Zulu)?",GMT / UTC
 Other,"In computing, stocks, and timezone calculations, what does ""UTC"" stand for?",Coordinated Universal Time
@@ -247,11 +247,11 @@ Physics,Give the temperature of absolute zero in terms of Kelvin.,0 Kelvin
 Physics,How many small calories (cal) are needed to make a big calorie (Cal)?,1000 calories
 Physics,"In 20 °C air, what is the speed of sound (in metres per second)?",343 m/s
 Physics,"In electronics, what does ""LED"" stand for?",Light Emitting Diode
-Physics,"In electronics, what does the symbol <em>I</em> stand for?",(Electric) Current
+Physics,"In electronics, what does the symbol <var>I</var> stand for?",(Electric) Current
 Physics,Name one of the 4 fundamental forces of the universe.,"Gravity, Electromagnetism, Strong Interaction, Weak Interaction"
 Physics,Scientists hope that a <em>Theory of Everything</em> will combine which two well-established theories into one?,General Relativity and Quantum Mechanics
-Physics,"The equation <var>E</var> = <var>m<var> × <var>c</var><sup>2</sup>"" was derived by which German physicist?",(Albert) Einstein
-Physics,What does the <var>C</var> represent in the equation <var>Q</var> = <var>C</var> × Δθ?,Heat Capacity
+Physics,The equation <var>E</var> = <var>mc</var><sup>2</sup> was derived by which German physicist?,(Albert) Einstein
+Physics,What does the <var>C</var> represent in the equation <var>Q</var> = <var>C</var> × <var>Δθ</var>?,Heat Capacity
 Physics,"What is a ""weight suspended from a pivot so that it can swing freely"" also known as?",Pendulum
 Physics,What is the antimatter equivalent of an electron?,Positron
 Physics,"What is the name of the enclosure used to ""block electromagnetic fields""?",Faraday Cage/Shield

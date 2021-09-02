@@ -6,4 +6,6 @@ Todo:
         - How to run the Redis server
     - Add footer with the copyright notice
     - Add a link to the credits/licences page
-    - Update trivia questions
+
+Fixme:
+    - Add alert message if the next question button is clicked when there are no more questions
