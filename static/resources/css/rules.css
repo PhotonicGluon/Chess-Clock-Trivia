@@ -1,4 +1,3 @@
-/* GENERAL STYLING */
 h2,
 h3 {
   margin-top: 10px;
@@ -6,11 +5,9 @@ h3 {
 li {
   margin-top: 0.25em;
 }
-/* ELEMENT-BASED STYLING */
 #rules {
   text-align: justify;
 }
-/* MEDIA QUERIES */
 @media screen and (max-width: 900px) {
   #rules {
     margin: 5vw;

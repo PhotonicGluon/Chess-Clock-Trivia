@@ -1,4 +1,3 @@
-/* CLASS-BASED STYLING */
 .clock {
   font-size: 36pt;
   font-weight: bold;
@@ -28,7 +27,6 @@
   margin: 4px;
   font-size: 18pt;
 }
-/* ELEMENT-BASED STYLING */
 #clocks-area {
   display: flex;
 }
@@ -55,7 +53,6 @@
 #validation-errors ul {
   list-style-type: none;
 }
-/* MEDIA QUERIES */
 @media screen and (max-width: 900px) {
   #mobile-warning {
     display: block;
