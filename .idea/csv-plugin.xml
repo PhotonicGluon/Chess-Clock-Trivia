@@ -3,14 +3,7 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/app/data/Trivia.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/app/data/trivia.csv">
+        <entry key="/data/trivia.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
