@@ -42,7 +42,7 @@ redis-server --version
 ```
 
 ### Installing Dependencies
-1. Download the whole repository as a `.zip` file. You can do so by clicking [this link](https://github.com/Ryan-Kan/Chess-Clock-Trivia/archive/master.zip).
+1. Download the whole repository as a `.zip` file. You can do so by clicking [this link](https://github.com/Ryan-Kan/Chess-Clock-Trivia/archive/refs/heads/main.zip).
 2. Extract the contents of that `.zip` file.
 3. Navigate to the root directory of Chess Clock Trivia:
     ```bash
