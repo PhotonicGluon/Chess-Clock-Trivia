@@ -17,7 +17,7 @@
 
     <!-- Vendors' Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/less@4.1.1"></script>
+    <script src="{{ url_for("static", filename="vendors/js/less.min.js") }}"></script>
 
     {% block vendor_scripts %}{% endblock %}
 
