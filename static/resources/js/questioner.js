@@ -13,6 +13,7 @@ let questionNumberSpan = $("#question-number");
 let initialQuestionNumber = null;  // Initial question number as obtained from the server
 let questionNumber = 1;  // Current (relative) question number
 let questions = null;  // Variable to store the list of questions that will be obtained from the server
+let numQuestions = null;
 
 // MAIN CODE
 // Code to be run once the user presses Enter/Return whilst on the "Enter Session ID" field
@@ -43,9 +44,10 @@ submitSessionIDButton.click(() => {
             if (data["error"] != null) {  // An error was sent along
                 $("#submission-errors").html(data["error"]);
             } else {
-                // Get the initial question number, and update the `questions` array
+                // Get the initial question number, then update `questions` array and the question count
                 initialQuestionNumber = data["initial_qn_num"];
                 questions = data["questions"];
+                numQuestions = questions.length;
 
                 // Update the question number span
                 questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);
@@ -65,17 +67,23 @@ submitSessionIDButton.click(() => {
 
 // Code to be run when the user clicks on "Get Next Question"
 getNextQuestionButton.click(() => {
-    // Get the next question and answer
-    let answer = questions[questionNumber - 1]["Answer"];
-    let question = questions[questionNumber - 1]["Question"];
+    if (questionNumber <= numQuestions) {  // Still have questions that can be asked
+        // Get the next question and answer
+        let answer = questions[questionNumber - 1]["Answer"];
+        let question = questions[questionNumber - 1]["Question"];
 
-    // Update the question number, question and answer spans
-    questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${TOTAL_NUM_QUESTIONS}`);
-    questionSpan.html(question);
-    answerSpan.html("Answer: " + answer);
+        // Update the question number, question and answer spans
+        questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${TOTAL_NUM_QUESTIONS}`);
+        questionSpan.html(question);
+        answerSpan.html("Answer: " + answer);
 
-    // Increment question number
-    questionNumber++;
+        // Increment question number
+        questionNumber++;
+    } else {  // No more questions
+        $("#question-header").html("Finished!");
+        questionSpan.text("There are no more questions!");
+        answerSpan.html("Everyone who is <b>not</b> eliminated are winners!");
+    }
 });
 
 // Code to be run when the user clicks on "Update Session on Server"

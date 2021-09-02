@@ -46,6 +46,9 @@
 #question {
   font-size: 18pt;
 }
+#question-area {
+  height: 25vh;
+}
 #topic {
   font-size: 14pt;
   color: #777;

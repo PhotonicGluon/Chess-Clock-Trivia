@@ -28,6 +28,7 @@ let times = [-1, 6000, 6000];  // Array to store times for all clocks
 let initialQuestionNumber = null;  // Initial question number as obtained from the server
 let questionNumber = 1;  // Current (relative) question number
 let questions = null;  // List of questions that will be obtained from the server
+let numQuestions = null;
 
 let activeTeam = 1;  // The first team's clock will go first
 let eliminatedTeams = [];  // List of eliminated teams that cannot play anymore
@@ -84,17 +85,45 @@ function getNumClocks() {
 }
 
 function getNextQuestion(questionNum) {
-    // Get the question and topic from the questions array
-    let topic = questions[questionNum - 1]["Topic"];
-    let question = questions[questionNum - 1]["Question"];
+    if (questionNum <= numQuestions) {  // Still have questions that can be asked
+        // Get the question and topic from the questions array
+        let topic = questions[questionNum - 1]["Topic"];
+        let question = questions[questionNum - 1]["Question"];
 
-    // Update the question number, question and topic spans
-    questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${TOTAL_NUM_QUESTIONS}`);
-    questionSpan.html(question);
-    topicSpan.html("Topic: " + topic);
+        // Update the question number, question and topic spans
+        questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${TOTAL_NUM_QUESTIONS}`);
+        questionSpan.html(question);
+        topicSpan.html("Topic: " + topic);
 
-    // Increment question number
-    questionNumber++;
+        // Increment question number
+        questionNumber++;
+    } else {  // No more questions
+        // Clear the interval
+        clearInterval(interval);
+
+        // Disable all players' buttons
+        let numPlayers = getNumClocks();
+
+        for (let i = 1; i <= numPlayers; i++) {
+            $(`#toggle-${i}`).addClass("button-disabled");
+            $(`#deduct-${i}`).addClass("button-disabled");
+        }
+
+        // Update text in the questions area
+        $("#question-header").html("Finished!");
+        questionSpan.text("There are no more questions!");
+        topicSpan.html("Everyone who is <b>not</b> eliminated are winners!");
+
+        // Colour all non-eliminated teams' clocks green
+        for (let i = 1; i <= numPlayers; i++) {
+            if (!eliminatedTeams.includes(i)) {  // Not eliminated
+                $(`#clock-${i}`).css("color", "green");
+            }
+        }
+
+        // Shoot some fireworks!
+        confettiFireworks(10, 0.3);
+    }
 }
 
 function confettiFireworks(duration, fireworkInterval) {
@@ -172,9 +201,10 @@ submitSessionIDButton.click(() => {
             // Parse the data
             data = JSON.parse(data);
 
-            // Get the initial question number, and update `questions` array
+            // Get the initial question number, then update `questions` array and the question count
             initialQuestionNumber = data["initial_qn_num"];
             questions = data["questions"];
+            numQuestions = questions.length;
 
             // Update the question number span
             questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);

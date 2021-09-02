@@ -6,4 +6,4 @@ Todo:
         - How to run the Redis server
 
 Fixme:
-    - Add alert message if the next question button is clicked when there are no more questions
+    - Fix inconsistent reference of "teams", "contestants" and "players" in `main_page.js` and other script files
