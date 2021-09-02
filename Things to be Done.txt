@@ -1,7 +1,5 @@
 Todo:
     - Fill in `README.md`
-        - Banner/Logo image
-        - Installation instructions
         - How to run the server
         - How to run the Redis server
 
