@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}{{ error_code }} {{ error_name }}{% endblock %}
+
+{% block content %}
+    <div class="center-screen">
+        <h1>{{ error_code }}</h1>
+        <h2 class="center">{{ error_name }}</h2>
+        <p class="center">{{ error_desc }}</p>
+    </div>
+{% endblock %}

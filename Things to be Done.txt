@@ -2,6 +2,5 @@ Todo:
     - Fill in `README.md`
         - How to run the server
         - How to run the Redis server
-    - Ratelimit API pages
     - Add "Last Updated" datetime to pages
     - Javascript obfuscator?
