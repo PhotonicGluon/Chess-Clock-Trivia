@@ -60,6 +60,10 @@ var {
   color: #f00;
   font-size: 14pt;
 }
+#last-updated {
+  font-size: 11pt;
+  color: #888;
+}
 @media screen and (max-width: 900px) {
   .center-screen {
     width: 90%;

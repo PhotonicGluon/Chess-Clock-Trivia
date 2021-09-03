@@ -12,7 +12,7 @@ Description: Main flask app file.
 # IMPORTS
 import os
 from csv import DictReader
-from datetime import timedelta
+from datetime import datetime, timedelta
 from json import dumps, loads
 from random import choices, Random
 
@@ -24,6 +24,7 @@ from werkzeug.exceptions import HTTPException
 
 # CONSTANTS
 CREDITS_FILE = "data/credits.md"
+LAST_UPDATED_TIMESTAMP_FILE = "data/last-updated-timestamp.txt"
 RULES_FILE = "data/rules.md"
 SEED_WORDS_FILE = "data/seed-words.txt"
 TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
@@ -48,6 +49,11 @@ with open(RULES_FILE, "r") as f:
 # Read the credits/licences from the `CREDITS_FILE`
 with open(CREDITS_FILE, "r") as f:
     creditsMD = f.read()  # The text in the `RULES_FILE` is markdown text
+
+# Read the "last updated" value from th `LAST_UPDATED_TIMESTAMP_FILE`
+with open(LAST_UPDATED_TIMESTAMP_FILE, "r") as f:
+    lastUpdatedTimestamp = int(f.read())
+    lastUpdated = datetime.fromtimestamp(lastUpdatedTimestamp).strftime("%Y-%m-%d %H:%M")
 
 # Set up the app instance with rate limiting capabilities
 app = Flask(__name__)
@@ -81,25 +87,25 @@ def get_questions_from_session(session_id):
 @app.route("/")
 @limiter.limit("3/second")
 def main_page():
-    return render_template("main_page.html", num_questions=numQuestions)
+    return render_template("main_page.html", num_questions=numQuestions, last_updated=lastUpdated)
 
 
 @app.route("/questioner")
 @limiter.limit("3/second")
 def questioner():
-    return render_template("questioner.html", num_questions=numQuestions)
+    return render_template("questioner.html", num_questions=numQuestions, last_updated=lastUpdated)
 
 
 @app.route("/rules")
 @limiter.limit("3/second")
 def rules():
-    return render_template("rules.html", rules=rulesMD)
+    return render_template("rules.html", rules=rulesMD, last_updated=lastUpdated)
 
 
 @app.route("/credits")
 @limiter.limit("3/second")
 def credits_page():
-    return render_template("credits.html", credits=creditsMD)
+    return render_template("credits.html", credits=creditsMD, last_updated=lastUpdated)
 
 
 # CODE-ONLY PAGES

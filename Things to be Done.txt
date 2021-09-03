@@ -2,5 +2,5 @@ Todo:
     - Fill in `README.md`
         - How to run the server
         - How to run the Redis server
-    - Add "Last Updated" datetime to pages
-    - Javascript obfuscator?
+    - Allow selection of the types of questions to be asked (?)
+        - Trial questions?
