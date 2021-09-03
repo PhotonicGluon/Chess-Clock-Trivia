@@ -2,6 +2,6 @@ Todo:
     - Fill in `README.md`
         - How to run the server
         - How to run the Redis server
-
-Fixme:
-    - Fix inconsistent reference of "teams", "contestants" and "players" in `main_page.js` and other script files
+    - Ratelimit API pages
+    - Add "Last Updated" datetime to pages
+    - Javascript obfuscator?

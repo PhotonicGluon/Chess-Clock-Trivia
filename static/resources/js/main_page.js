@@ -1,16 +1,16 @@
 // CONSTANTS
-const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 4;
+const MIN_NUM_TEAMS = 2;
+const MAX_NUM_TEAMS = 4;
 
 const MIN_TIME = 10;  // In seconds
-const MAX_TIME = 3600;  // 1 hour
+const MAX_TIME = 3600;
 
-const MIN_PENALTY_TIME = 1;  // 1 second
-const MAX_PENALTY_TIME = 20;  // 20 seconds
+const MIN_PENALTY_TIME = 1;  // In seconds
+const MAX_PENALTY_TIME = 20;
 
 // GET ELEMENTS
 let sessionIDInput = $("#session-id");
-let numPlayersInput = $("#num-players");
+let numTeamsInput = $("#num-teams");
 let timeLimitInput = $("#time-limit");
 let penaltyTimeInput = $("#penalty-time");
 
@@ -35,11 +35,45 @@ let eliminatedTeams = [];  // List of eliminated teams that cannot play anymore
 
 let interval = null;  // Interval to handle the decrement of time; will be set once the game starts
 let isPaused = false;  // Whether clock interval is paused
-let gameStarted = false;
+let gameStarted = false;  // Whether the game has started or not
 
-// UTILITY FUNCTIONS
-function randomInRange(min, max) {
-    return Math.random() * (max - min) + min;
+// HELPER FUNCTIONS
+function confettiFireworks(duration, fireworkInterval) {
+    // Get the confetti canvas
+    let canvas = document.getElementById("confetti-canvas");
+
+    // Create the confetti function on that canvas
+    canvas.confetti = canvas.confetti || confetti.create(canvas, {resize: true});
+
+    // Determine when the animation should end
+    duration *= 1000;  // Duration needs to be in milliseconds
+    let animationEnd = Date.now() + duration;
+
+    // Define defaults for the confetti fireworks
+    let defaults = {startVelocity: 30, spread: 360, ticks: 60, zIndex: 0};
+
+    // Create the interval object that will shoot the fireworks
+    let interval = setInterval(function () {
+        let timeLeft = animationEnd - Date.now();
+
+        // Stop the animation once time is up
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
+        }
+
+        // Calculate the particle count
+        let particleCount = 50 * (timeLeft / duration);
+
+        // Since particles fall down, we should start them a bit higher than random
+        canvas.confetti(Object.assign({}, defaults, {
+            particleCount,
+            origin: {x: randomInRange(0.1, 0.3), y: Math.random() - 0.2}
+        }));
+        canvas.confetti(Object.assign({}, defaults, {
+            particleCount,
+            origin: {x: randomInRange(0.7, 0.9), y: Math.random() - 0.2}
+        }));
+    }, fireworkInterval * 1000);
 }
 
 function displayTime(timeInHundredthsSeconds) {
@@ -79,9 +113,12 @@ function displayTime(timeInHundredthsSeconds) {
     }
 }
 
-// HELPER FUNCTIONS
 function getNumClocks() {
     return $("#clocks-area .clock-area").length;
+}
+
+function getNumTeams() {
+    return getNumClocks();  // Number of clocks equals the number of teams
 }
 
 function getNextQuestion(questionNum) {
@@ -101,10 +138,10 @@ function getNextQuestion(questionNum) {
         // Clear the interval
         clearInterval(interval);
 
-        // Disable all players' buttons
-        let numPlayers = getNumClocks();
+        // Disable all teams' buttons
+        let numTeams = getNumTeams();
 
-        for (let i = 1; i <= numPlayers; i++) {
+        for (let i = 1; i <= numTeams; i++) {
             $(`#toggle-${i}`).addClass("button-disabled");
             $(`#deduct-${i}`).addClass("button-disabled");
         }
@@ -115,7 +152,7 @@ function getNextQuestion(questionNum) {
         topicSpan.html("Everyone who is <b>not</b> eliminated are winners!");
 
         // Colour all non-eliminated teams' clocks green
-        for (let i = 1; i <= numPlayers; i++) {
+        for (let i = 1; i <= numTeams; i++) {
             if (!eliminatedTeams.includes(i)) {  // Not eliminated
                 $(`#clock-${i}`).css("color", "green");
             }
@@ -126,42 +163,36 @@ function getNextQuestion(questionNum) {
     }
 }
 
-function confettiFireworks(duration, fireworkInterval) {
-    // Get the confetti canvas
-    let canvas = document.getElementById("confetti-canvas");
+function randomInRange(min, max) {
+    return Math.random() * (max - min) + min;
+}
 
-    // Create the confetti function on that canvas
-    canvas.confetti = canvas.confetti || confetti.create(canvas, {resize: true});
+function updateTimes() {
+    // Check if the game started
+    if (!gameStarted) {
+        // Get the current value of the input field
+        let timeLimitInSeconds = timeLimitInput.val();
 
-    // Determine when the animation should end
-    duration *= 1000;  // Duration needs to be in milliseconds
-    let animationEnd = Date.now() + duration;
+        // Convert that time limit into hundredths
+        let timeLimitInHundredthsSeconds = timeLimitInSeconds * 100;
 
-    // Define defaults for the confetti fireworks
-    let defaults = {startVelocity: 30, spread: 360, ticks: 60, zIndex: 0};
+        // Get the correct time limit that should be shown on all clocks
+        let timeLimit = displayTime(timeLimitInHundredthsSeconds);
 
-    // Create the interval object that will shoot the fireworks
-    let interval = setInterval(function () {
-        let timeLeft = animationEnd - Date.now();
+        // Reset the `times` array
+        times = [-1];  // We want to use 1-indexed array
 
-        // Stop the animation once time is up
-        if (timeLeft <= 0) {
-            return clearInterval(interval);
+        // Update all clocks
+        let numClocks = getNumClocks();
+
+        for (let i = 1; i <= numClocks; i++) {
+            // Update the text
+            $(`#clock-${i}`).text(timeLimit);
+
+            // Append the new time limit to the array
+            times.push(timeLimitInHundredthsSeconds);
         }
-
-        // Calculate the particle count
-        let particleCount = 50 * (timeLeft / duration);
-
-        // Since particles fall down, we should start them a bit higher than random
-        canvas.confetti(Object.assign({}, defaults, {
-            particleCount,
-            origin: {x: randomInRange(0.1, 0.3), y: Math.random() - 0.2}
-        }));
-        canvas.confetti(Object.assign({}, defaults, {
-            particleCount,
-            origin: {x: randomInRange(0.7, 0.9), y: Math.random() - 0.2}
-        }));
-    }, fireworkInterval * 1000);
+    }
 }
 
 // MAIN CODE
@@ -221,33 +252,33 @@ submitSessionIDButton.click(() => {
     }
 });
 
-// Code to be run when the player count is updated
-numPlayersInput.change(() => {
+// Code to be run when the team count is updated
+numTeamsInput.change(() => {
     // Check if the game started
     if (!gameStarted) {
         // Get the current value of the input field
-        let numPlayers = numPlayersInput.val();
+        let numTeams = numTeamsInput.val();
 
         // Get the clocks area div
         let clocksArea = $("#clocks-area");
 
         // Get the net number of clocks to be added/removed
         let currNumClocks = getNumClocks();
-        let netClocks = numPlayers - currNumClocks;
+        let netClocks = numTeams - currNumClocks;
 
-        // Check if any clocks need to be removed or added
-        if (netClocks < 0) {
-            // Remove clocks
-            for (let i = currNumClocks; i > numPlayers; i--) {
+        // Update clock count on the main page
+        if (netClocks < 0) {  // Need to remove clocks
+            // Delete excess clocks
+            for (let i = currNumClocks; i > numTeams; i--) {
                 $(`#clock-area-${i}`).remove();
             }
 
-            // Update times of the clocks
+            // Update time on the clocks
             updateTimes();
 
-        } else if (netClocks > 0) {
-            // Add clocks
-            for (let i = currNumClocks + 1; i <= numPlayers; i++) {
+        } else if (netClocks > 0) {  // Need to add clocks
+            // Add additional clocks
+            for (let i = currNumClocks + 1; i <= numTeams; i++) {
                 // Copy base clock
                 let newClock = $(`#clock-area-1`).clone();
 
@@ -269,48 +300,19 @@ numPlayersInput.change(() => {
                 clocksArea.append(newClock);
             }
 
-            // Update times of the clocks
+            // Update time on the clocks
             updateTimes();
         }
     }
 });
 
 // Code to be run when the time limit is updated
-function updateTimes() {
-    // Check if the game started
-    if (!gameStarted) {
-        // Get the current value of the input field
-        let timeLimitInSeconds = timeLimitInput.val();
-
-        // Convert that time limit into hundredths
-        let timeLimitInHundredthsSeconds = timeLimitInSeconds * 100;
-
-        // Get the correct time limit that should be shown on all clocks
-        let timeLimit = displayTime(timeLimitInHundredthsSeconds);
-
-        // Reset the `times` array
-        times = [-1];  // We want to use 1-indexed array
-
-        // Update all clocks
-        let numClocks = getNumClocks();
-
-        for (let i = 1; i <= numClocks; i++) {
-            // Update the text
-            $(`#clock-${i}`).text(timeLimit);
-
-            // Append the new time limit to the array
-            times.push(timeLimitInHundredthsSeconds);
-        }
-    }
-}
-
 timeLimitInput.change(updateTimes);
 
 // Code to be run when the penalty time is updated
 penaltyTimeInput.change(() => {
-    // Check if the game has started
     if (!gameStarted) {
-        penaltyTime = penaltyTimeInput.val() * 100;  // Convert to hundredths
+        penaltyTime = penaltyTimeInput.val() * 100;  // Convert seconds to hundredths
     }
 });
 
@@ -329,16 +331,18 @@ function toggleClock(button) {
             // Update active team
             activeTeam = parseInt(buttonID.match(/\d+/g), 10);
 
-            // Get the number of players
-            let numPlayers = getNumClocks();
+            // Get the number of teams
+            let numTeams = getNumTeams();
 
-            // Disable all other players' buttons
-            for (let i = 1; i <= numPlayers; i++) {
+            // Disable all other teams' buttons
+            for (let i = 1; i <= numTeams; i++) {
+                // Disable toggle time button for non-active teams
                 if (i !== activeTeam) {
                     $(`#toggle-${i}`).addClass("button-disabled");
                 }
 
-                $(`#deduct-${i}`).addClass("button-disabled");  // Disable deduct time button for ALL teams
+                // Disable deduct time button for ALL teams
+                $(`#deduct-${i}`).addClass("button-disabled");
             }
 
             // Change the state of the interval to "not paused"
@@ -374,20 +378,6 @@ function handleTeamElimination() {
 
     // Add this team to the list of eliminated teams
     eliminatedTeams.push(activeTeam);
-
-    // Change the active team to the next possible team
-    let numPlayers = getNumClocks();
-
-    for (let i = activeTeam; i < activeTeam + numPlayers; i++) {
-        // Generate the team number
-        let teamNumber = i % numPlayers + 1;
-
-        // Check if the team is not eliminated
-        if (!eliminatedTeams.includes(teamNumber)) {
-            // Set that team to be the new active team
-            activeTeam = teamNumber;
-        }
-    }
 }
 
 // Code to be run when the "Deduct Time" button is pressed
@@ -409,16 +399,15 @@ function deductTime(button) {
             times[teamNumber] = 0
 
             // Handle that team's elimination
-            handleTeamElimination();
+            handleTeamElimination();  // This will update the active team
 
             // Check how many teams are active now
-            if (eliminatedTeams.length === getNumClocks() - 1) {
-                // Only that team remains
-                onlyOneRemains(activeTeam);  // This is the new active team
+            if (eliminatedTeams.length === getNumTeams() - 1) {
+                // Only the currently active team remains
+                onlyOneRemains(activeTeam);
             }
 
         } else {
-            // Since the time does not go below zero, it is safe to just subtract the time
             times[teamNumber] -= penaltyTime;
         }
 
@@ -429,11 +418,10 @@ function deductTime(button) {
 
 // Code to handle pausing
 function handlePause() {
-    // Get the number of players
-    let numPlayers = getNumClocks();
-
     // Enable all non-eliminated teams' buttons
-    for (let i = 1; i <= numPlayers; i++) {
+    let numTeams = getNumTeams();
+
+    for (let i = 1; i <= numTeams; i++) {
         if (!eliminatedTeams.includes(i)) {
             $(`#toggle-${i}`).removeClass("button-disabled");
             $(`#deduct-${i}`).removeClass("button-disabled");
@@ -451,13 +439,13 @@ startGameButton.click(() => {
 
         // Declare variables for the validation of data
         let validData = true;
-        let errorMsg = "There were errors:<ul>";  // Will be modified along the way
+        let errorMsg = "There were errors:<ul>";  // The ul tag will be closed by the end
 
         // Get the data that was entered
-        let numPlayers, timeLimit, penaltyTime;
+        let numTeams, timeLimit, penaltyTime;
 
         try {
-            numPlayers = parseInt(numPlayersInput.val());
+            numTeams = parseInt(numTeamsInput.val());
             timeLimit = parseInt(timeLimitInput.val());
             penaltyTime = parseInt(penaltyTimeInput.val());
         } catch (e) {  // Occurs if there are invalid data types for the integer
@@ -467,15 +455,16 @@ startGameButton.click(() => {
 
         // Validate data
         if (validData) {
-            if (!(MIN_PLAYERS <= numPlayers && numPlayers <= MAX_PLAYERS)) {
+            if (!(MIN_NUM_TEAMS <= numTeams && numTeams <= MAX_NUM_TEAMS)) {
                 validData = false;
-                errorMsg += `<li>Number of players should be between ${MIN_PLAYERS} and ${MAX_PLAYERS} inclusive.</li>`;
+                errorMsg += `<li>Number of teams should be between ${MIN_NUM_TEAMS} and ${MAX_NUM_TEAMS} 
+                             inclusive.</li>`;
             }
 
             if (!(MIN_TIME <= timeLimit && timeLimit <= MAX_TIME)) {
                 validData = false;
-                errorMsg += `<li>Time limit should be between ${MIN_TIME} seconds and ${MAX_TIME} seconds inclusive.
-                             </li>`;
+                errorMsg += `<li>Time limit should be between ${MIN_TIME} seconds and ${MAX_TIME} seconds 
+                             inclusive.</li>`;
             }
 
             if (!(MIN_PENALTY_TIME <= penaltyTime && penaltyTime <= MAX_PENALTY_TIME)) {
@@ -500,7 +489,7 @@ startGameButton.click(() => {
                         handleTeamElimination();
 
                         // Check how many teams are active now
-                        if (eliminatedTeams.length === getNumClocks() - 1) {
+                        if (eliminatedTeams.length === getNumTeams() - 1) {
                             // Only that team remains
                             onlyOneRemains(activeTeam);  // This is the new active team
                         } else {
@@ -519,7 +508,7 @@ startGameButton.click(() => {
             startGameButton.addClass("button-disabled");
 
             // Disable input fields
-            numPlayersInput.prop("disabled", true);
+            numTeamsInput.prop("disabled", true);
             timeLimitInput.prop("disabled", true);
             penaltyTimeInput.prop("disabled", true);
 
@@ -552,10 +541,10 @@ function onlyOneRemains(teamNumber) {
     // Highlight that team's clock in green
     $(`#clock-${teamNumber}`).css("color", "green")
 
-    // Disable all players' buttons
-    let numPlayers = getNumClocks();
+    // Disable all teams' buttons
+    let numTeams = getNumTeams();
 
-    for (let i = 1; i <= numPlayers; i++) {
+    for (let i = 1; i <= numTeams; i++) {
         $(`#toggle-${i}`).addClass("button-disabled");
         $(`#deduct-${i}`).addClass("button-disabled");
     }
