@@ -53,7 +53,7 @@ with open(CREDITS_FILE, "r") as f:
 # Read the "last updated" value from th `LAST_UPDATED_TIMESTAMP_FILE`
 with open(LAST_UPDATED_TIMESTAMP_FILE, "r") as f:
     lastUpdatedTimestamp = int(f.read())
-    lastUpdated = datetime.fromtimestamp(lastUpdatedTimestamp).strftime("%Y-%m-%d %H:%M")
+    lastUpdated = datetime.fromtimestamp(lastUpdatedTimestamp).strftime("%Y-%m-%d %H:%M %Z")
 
 # Set up the app instance with rate limiting capabilities
 app = Flask(__name__)
