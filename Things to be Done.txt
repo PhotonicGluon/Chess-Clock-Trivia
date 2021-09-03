@@ -2,6 +2,5 @@ Todo:
     - Fill in `README.md`
         - How to run the server
         - How to run the Redis server
-
-Fixme:
-    - Fix inconsistent reference of "teams", "contestants" and "players" in `main_page.js` and other script files
+    - Allow selection of the types of questions to be asked (?)
+        - Trial questions?

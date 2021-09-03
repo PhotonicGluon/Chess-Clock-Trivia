@@ -43,6 +43,8 @@
             <br>
             Go <a href="{{ url_for("rules") }}" target="_blank">here</a> to find out how to play Chess Clock Trivia.<br>
             Go <a href="{{ url_for("credits_page") }}" target="_blank">here</a> for the credits.
+            <br><br>
+            <span id="last-updated">Updated: {{ last_updated }}</span>
         </p>
     </div>
 
@@ -97,8 +99,8 @@
 
         <!-- Setup Area -->
         <div class="row center">
-            <h2>Number of Players</h2>
-            <label for="num-players"></label><input class="input-field" id="num-players" type="number" min="2"
+            <h2>Number of Teams</h2>
+            <label for="num-teams"></label><input class="input-field" id="num-teams" type="number" min="2"
                                                     value="2">
             <h2>Time Limit (in seconds)</h2>
             <label for="time-limit"></label><input class="input-field" id="time-limit" type="number" min="1" value="60">
