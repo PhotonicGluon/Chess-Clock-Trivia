@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Chess Clock Trivia - Set Up Session{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet/less" type="text/css" href="{{ url_for("static", filename="resources/css/set_up_session.less") }}">
+{% endblock %}
+
+{% block content %}
+    <div id="main-body">
+        <h1 id="main-title">Chess Clock Trivia - Set Up Session</h1>
+
+        <div class="row center">
+            <h2>Session ID</h2>
+            <span>Enter a session ID below. A suggested session ID is provided.</span>
+            <label for="session-id"></label><input class="center code-like" id="session-id" type="text"><br>
+
+            <h2>Session Passcode</h2>
+            <span>The passcode will be used to verify the authenticity of requests made with this session ID.</span>
+            <label for="session-passcode"></label><input class="center" id="session-passcode" type="password"><br>
+
+            <h2>Session Seed</h2>
+            <span>This is the seed that will be used to randomise the question order.</span>
+            <label for="session-seed"></label><input class="center" id="session-seed" type="text">
+            <br><br>
+            <a class="button" id="set-up-session">Set Up Session</a><br><br>
+            <span id="outcome"></span>
+            <br>
+            <span id="last-updated">Updated: {{ last_updated }}</span>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for("static", filename="resources/js/set_up_session.js") }}"></script>
+{% endblock %}

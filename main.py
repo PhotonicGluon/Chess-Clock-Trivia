@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-09-03
+Updated on 2021-09-04
 
 Copyright © Ryan Kan
 
@@ -30,7 +30,7 @@ SEED_WORDS_FILE = "data/seed-words.txt"
 TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
 
 SEED_LENGTH = 5  # Number of words in the seed
-EXPIRY_AFTER = 300  # How many seconds before a session expires (assuming no heartbeat)
+EXPIRY_AFTER = 3600  # How many seconds before a session expires (assuming no heartbeat)
 
 # Get the list of questions from the `TRIVIA_QUESTIONS_FILE`
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
@@ -80,14 +80,24 @@ def get_questions_from_session(session_id):
     current_qn_index = session["current_qn"] - 1  # We want to use zero-based indexing
 
     # Return the questions from the session
-    return {"initial_qn_num": session["current_qn"], "questions": session["questions"][current_qn_index:]}
+    return {
+        "outcome": "OK",
+        "initial_qn_num": session["current_qn"],
+        "questions": session["questions"][current_qn_index:]
+    }
 
 
-# VIEWABLE PAGES
+# MAIN PAGES
 @app.route("/")
 @limiter.limit("3/second")
 def main_page():
     return render_template("main_page.html", num_questions=numQuestions, last_updated=lastUpdated)
+
+
+@app.route("/set-up")
+@limiter.limit("3/second")
+def set_up():
+    return render_template("set_up_session.html", last_updated=lastUpdated)
 
 
 @app.route("/questioner")
@@ -96,6 +106,7 @@ def questioner():
     return render_template("questioner.html", num_questions=numQuestions, last_updated=lastUpdated)
 
 
+# DETAIL PAGES
 @app.route("/rules")
 @limiter.limit("3/second")
 def rules():
@@ -128,40 +139,57 @@ def heartbeat():
     return f"Heartbeat successful for session '{data['session_id']}'."
 
 
-@app.route("/code-only/generate-session-id", methods=["POST"])
+@app.route("/code-only/generate-suggested-session-id", methods=["POST"])
 @limiter.limit("3/second")
-def generate_session_id():
+def generate_suggested_session_id():
     return " ".join(choices(seedWords, k=SEED_LENGTH))
 
 
 @app.route("/code-only/get-questions", methods=["POST"])
-@limiter.limit("1/10second")
+@limiter.limit("3/second")
 def get_questions():
     # Get the data from the submitted form
     data = request.form
 
-    # Assert that the data contains the needed values
-    if "session_id" not in data:
-        return "The `session_id` must be provided."
+    # Ensure that all required data is sent
+    required_labels = ["session_id", "session_passcode"]
+
+    for required_label in required_labels:
+        if required_label not in data:
+            return dumps({"outcome": "error", "msg": f"The `{required_label}` must be provided."})
+
+    # Check the provided passcode against the actual passcode
+    try:
+        session = loads(redisDB.get(data["session_id"]))
+
+        if session["passcode"] != data["session_passcode"]:
+            return dumps({"outcome": "error",
+                          "msg": f"Incorrect passcode for session with ID '<code>{data['session_id']}</code>'."})
+
+    except TypeError:
+        return dumps({"outcome": "error", "msg": f"Session ID '<code>{data['session_id']}</code>' does not exist."})
 
     # Return the questions from that session
     return dumps(get_questions_from_session(data["session_id"]))
 
 
 @app.route("/code-only/set-up-session", methods=["POST"])
-@limiter.limit("1/10second")
+@limiter.limit("3/second")
 def set_up_session():
     # Get the data from the submitted form
     data = request.form
 
-    # Ensure that a session ID was sent
-    if "session_id" not in data:
-        return "The `session_id` must be provided."
+    # Ensure that all required data is sent
+    required_labels = ["session_id", "session_passcode", "session_seed"]
+
+    for required_label in required_labels:
+        if required_label not in data:
+            return dumps({"outcome": "error", "msg": f"The `{required_label}` must be provided."})
 
     # Check if the session does not already exist
     if redisDB.get(data["session_id"]) is None:
-        # Initialise the random number generator with the session ID
-        random_generator = Random(data["session_id"])
+        # Initialise the random number generator with the session seed
+        random_generator = Random(data["session_seed"])
 
         # Shuffle a copy of the `questions` array
         questions_copy = questions.copy()
@@ -170,6 +198,7 @@ def set_up_session():
         # Create the session data
         session_data = {
             "questions": questions_copy,
+            "passcode": data["session_passcode"],
             "current_qn": 1
         }
 
@@ -177,8 +206,11 @@ def set_up_session():
         redisDB.set(data["session_id"], dumps(session_data))
         redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
 
-    # Return the questions from the session
-    return dumps(get_questions_from_session(data["session_id"]))
+        # Return success message
+        return dumps({"outcome": "OK", "msg": "Session set up successfully."})
+    else:  # Session with same ID already set up
+        return dumps({"outcome": "error",
+                      "msg": f"Session with ID '<code>{data['session_id']}</code>' already set up."})
 
 
 @app.route("/code-only/update-session", methods=["POST"])
@@ -187,14 +219,22 @@ def update_session():
     # Get the data from the submitted form
     data = request.form
 
-    # Ensure that a session ID was sent
-    if "session_id" not in data or "question_num" not in data:
-        return "Both the `session_id` and `question_num` must be provided."
+    # Ensure that all required data is sent
+    required_labels = ["session_id", "session_passcode", "question_num"]
+
+    for required_label in required_labels:
+        if required_label not in data:
+            return dumps({"outcome": "error", "msg": f"The `{required_label}` must be provided."})
 
     # Update session data
     try:
         # Get the existing session data on the redis server
         session_data = loads(redisDB.get(data["session_id"]))
+
+        # Check if the submitted passcode is correct
+        if session_data["passcode"] != data["session_passcode"]:
+            return dumps({"outcome": "error",
+                          "msg": f"Incorrect passcode for session with ID '<code>{data['session_id']}</code>'."})
 
         # Modify the data
         session_data["current_qn"] = int(data["question_num"])
@@ -205,15 +245,15 @@ def update_session():
         # Update expiry time
         redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
 
-        return "Session updated successfully."
+        return dumps({"outcome": "OK", "msg": "Session updated successfully."})
 
-    # If reached here then probably the question number provided is of incorrect type
+    # If reached here then probably the session ID doesn't exist
     except TypeError:
-        return {"error": f"Session ID '{data['session_id']}' does not exist."}
+        return dumps({"outcome": "error", "msg": f"Session ID '{data['session_id']}' does not exist."})
 
     # If reached here then probably the question number is not valid
     except ValueError:
-        return f"Invalid question number '{data['question_num']}'."
+        return dumps({"outcome": "error", "msg": f"Invalid question number '{data['question_num']}'."})
 
 
 # ERROR PAGES

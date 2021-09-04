@@ -2,5 +2,12 @@ Todo:
     - Fill in `README.md`
         - How to run the server
         - How to run the Redis server
+    - Update the rules/protocols on how to set up the session
     - Allow selection of the types of questions to be asked (?)
         - Trial questions?
+    - Allow uploading of custom trivia questions.
+    - Allow extension of session expiry time (but not through heartbeats)
+
+Fixme:
+    - Validate data on the server side.
+    - Check that the code on ALL pages works with the new "set up session" page.

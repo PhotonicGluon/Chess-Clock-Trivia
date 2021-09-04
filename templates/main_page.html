@@ -22,23 +22,22 @@
         <h1>Chess Clock Trivia</h1>
         <span class="center error-text" id="mobile-warning">It is recommended to access the main page using a
             device with a larger screen width.<br><br></span>
-        <p class="center">
-            A suggested session ID is<br>
-            <code class="session-id" id="session-id-span">{{ seed_value }}</code><br>
-            You may also enter a previous session ID.
-        </p>
 
         <br>
 
         <div class="row center">
             <h2>Session ID</h2>
             <label for="session-id"></label><input class="center code-like" id="session-id" type="text"
-                                                   placeholder="Enter a session ID here"><br>
+                                                   placeholder="Enter the session ID here"><br>
+            <h2>Session Passcode</h2>
+            <label for="session-passcode"></label><input class="center" id="session-passcode" type="password"
+                                                   placeholder="Enter the session passcode here"><br>
             <a class="button" id="submit-session-id">Submit Session ID</a><br><br>
             <span class="error-text" id="submission-errors"></span>
         </div>
 
         <p class="center">
+            Head <a href="{{ url_for("set_up") }}" target="_blank">here</a> to set up the session.
             Head to <a href="{{ url_for("questioner") }}" target="_blank">this page</a> to set up the Questioner side.
             <br>
             Go <a href="{{ url_for("rules") }}" target="_blank">here</a> to find out how to play Chess Clock Trivia.<br>
@@ -51,6 +50,7 @@
     <!-- This will only be shown once the session ID has been entered -->
     <div id="main-body" style="display: none">
         <h1 id="main-title">Chess Clock Trivia</h1>
+        <h3 class="center" id="session-id-span"></h3>
 
         <!-- Confetti Canvas -->
         <canvas id="confetti-canvas"></canvas>

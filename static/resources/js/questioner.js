@@ -1,5 +1,6 @@
 // GET ELEMENTS
 let sessionIDInput = $("#session-id");
+let sessionPasscodeInput = $("#session-passcode");
 
 let getNextQuestionButton = $("#get-next-question");
 let submitSessionIDButton = $("#submit-session-id");
@@ -27,41 +28,53 @@ sessionIDInput.keyup((event) => {
 
 // Code to be run once the user clicks on "Submit Session ID"
 submitSessionIDButton.click(() => {
-    if (sessionIDInput.val() !== "") {  // Non-empty session ID
+    if (sessionIDInput.val() !== "" && sessionPasscodeInput.val() !== "") {  // Non-empty session ID and passcode
         // Get the questions from the server
         $.ajax({
             url: "/code-only/get-questions",
             method: "POST",
-            data: {"session_id": sessionIDInput.val()},
+            data: {
+                "session_id": sessionIDInput.val(),
+                "session_passcode": sessionPasscodeInput.val()
+            },
         }).done((data) => {
-            // Update session ID variable
-            sessionID = sessionIDInput.val();
+            try {
+                // Update session ID and session passcode variables
+                sessionID = sessionIDInput.val();
+                sessionPasscode = sessionPasscodeInput.val();
 
-            // Parse the string data as JSON data
-            data = JSON.parse(data);
+                // Parse the string data as JSON data
+                data = JSON.parse(data);
 
-            // Check if there are any errors
-            if (data["error"] != null) {  // An error was sent along
-                $("#submission-errors").html(data["error"]);
-            } else {
-                // Get the initial question number, then update `questions` array and the question count
-                initialQuestionNumber = data["initial_qn_num"];
-                questions = data["questions"];
-                numQuestions = questions.length;
+                // Check the outcome
+                if (data["outcome"] === "error") {  // An error was sent along
+                    $("#submission-errors").html(data["msg"]);
 
-                // Update the question number span
-                questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);
+                } else {  // Assume is OK
+                    // Get the initial question number, then update `questions` array and the question count
+                    initialQuestionNumber = data["initial_qn_num"];
+                    questions = data["questions"];
+                    numQuestions = questions.length;
 
-                // Show the main div and hide this div
-                $("#main-body").css("display", "block");
-                $("#session-id-entering-modal").css("display", "none");
+                    // Update the question number span
+                    questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);
 
-                // Make the session ID appear when hovering over the title
-                $("#main-title").prop("title", `Session ID: ${sessionID}`);
+                    // Show the main div and hide this div
+                    $("#main-body").css("display", "block");
+                    $("#session-id-entering-modal").css("display", "none");
+
+                    // Make the session ID show up beneath the main header
+                    $("#session-id-span").html(`Session ID: <code>${sessionID}</code>`);
+                }
+            } catch (e) {  // Likely that the request timed out
+                $("#submission-errors").text("Request timed out. Try again in a while.");
             }
         });
-    } else {  // Session ID is empty
+
+    } else if (sessionIDInput.val() === "") {  // Session ID is empty
         $("#submission-errors").text("Session ID cannot be empty.");
+    } else {  // Session passcode is empty
+        $("#submission-errors").text("Session passcode cannot be empty.");
     }
 });
 
@@ -94,11 +107,15 @@ updateSessionButton.click(() => {
         method: "POST",
         data: {
             "session_id": sessionID,
+            "session_passcode": sessionPasscode,
             "question_num": initialQuestionNumber + questionNumber - 1
         }
     }).done((data) => {
+        // Parse response from server
+        data = JSON.parse(data);
+
         // Show response from server
-        $("#server-response").text(data);
+        $("#server-response").text(data["msg"]);
 
         // Disable the update session button
         updateSessionButton.addClass("button-disabled");

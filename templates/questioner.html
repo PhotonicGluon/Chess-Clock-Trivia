@@ -22,10 +22,15 @@
             <h2>Session ID</h2>
             <label for="session-id"></label><input class="center code-like" id="session-id" type="text"
                                                    placeholder="Enter a session ID here"><br>
+            <h2>Session Passcode</h2>
+            <label for="session-passcode"></label><input class="center" id="session-passcode" type="password"
+                                                   placeholder="Enter the session passcode here"><br>
             <a class="button" id="submit-session-id">Submit Session ID</a><br><br>
             <span class="error-text" id="submission-errors"></span>
 
             <p class="center">
+                Head <a href="{{ url_for("set_up") }}" target="_blank">here</a> to set up the session.
+                <br>
                 Please go <a href="{{ url_for("rules") }}" target="_blank">here</a> to obtain the protocols that
                 the <em>Questioner</em> should follow.<br>
                 Go <a href="{{ url_for("credits_page") }}" target="_blank">here</a> for the credits.
@@ -38,6 +43,7 @@
     <!-- This will only be shown once the session ID has been entered -->
     <div id="main-body" style="display: none">
         <h1 id="main-title">Chess Clock Trivia - Questioner</h1>
+        <h3 class="center" id="session-id-span"></h3>
 
         <!-- Questions Area -->
         <div>

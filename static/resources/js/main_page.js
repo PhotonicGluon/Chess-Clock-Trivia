@@ -10,6 +10,7 @@ const MAX_PENALTY_TIME = 20;
 
 // GET ELEMENTS
 let sessionIDInput = $("#session-id");
+let sessionPasscodeInput = $("#session-passcode");
 let numTeamsInput = $("#num-teams");
 let timeLimitInput = $("#time-limit");
 let penaltyTimeInput = $("#penalty-time");
@@ -67,11 +68,11 @@ function confettiFireworks(duration, fireworkInterval) {
         // Since particles fall down, we should start them a bit higher than random
         canvas.confetti(Object.assign({}, defaults, {
             particleCount,
-            origin: {x: randomInRange(0.1, 0.3), y: Math.random() - 0.2}
+            origin: {x: randrange(0.1, 0.3), y: Math.random() - 0.2}
         }));
         canvas.confetti(Object.assign({}, defaults, {
             particleCount,
-            origin: {x: randomInRange(0.7, 0.9), y: Math.random() - 0.2}
+            origin: {x: randrange(0.7, 0.9), y: Math.random() - 0.2}
         }));
     }, fireworkInterval * 1000);
 }
@@ -163,10 +164,6 @@ function getNextQuestion(questionNum) {
     }
 }
 
-function randomInRange(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
 function updateTimes() {
     // Check if the game started
     if (!gameStarted) {
@@ -196,18 +193,6 @@ function updateTimes() {
 }
 
 // MAIN CODE
-// Code to be run once the page is loaded
-$(document).ready(() => {
-    // Get a session ID from the server
-    $.ajax({
-        url: "/code-only/generate-session-id",
-        method: "POST"
-    }).done((data) => {
-        // Update the span
-        $("#session-id-span").text(data);
-    });
-});
-
 // Code to be run once the user presses Enter/Return whilst on the "Enter Session ID" field
 sessionIDInput.keyup((event) => {
     if (event.which === 13) {  // Key pressed was the Enter/Return key
@@ -219,36 +204,49 @@ sessionIDInput.keyup((event) => {
 
 // Code to be run once the user clicks on "Submit Seed Value"
 submitSessionIDButton.click(() => {
-    if (sessionIDInput.val() !== "") {
+    if (sessionIDInput.val() !== "" && sessionPasscodeInput.val() !== "") {
         // Get all questions
         $.ajax({
-            url: "/code-only/set-up-session",
+            url: "/code-only/get-questions",
             method: "POST",
-            data: {"session_id": sessionIDInput.val()},
+            data: {
+                "session_id": sessionIDInput.val(),
+                "session_passcode": sessionPasscodeInput.val()
+            },
         }).done((data) => {
-            // Update session ID
-            sessionID = sessionIDInput.val();
+            try {
+                // Parse the data
+                data = JSON.parse(data);
 
-            // Parse the data
-            data = JSON.parse(data);
+                // Check the outcome
+                if (data["outcome"] === "error") {
+                    // Show the submission errors
+                    $("#submission-errors").html(data["msg"]);
 
-            // Get the initial question number, then update `questions` array and the question count
-            initialQuestionNumber = data["initial_qn_num"];
-            questions = data["questions"];
-            numQuestions = questions.length;
+                } else {  // Assume it is OK
+                    // Get the initial question number, then update `questions` array and the question count
+                    initialQuestionNumber = data["initial_qn_num"];
+                    questions = data["questions"];
+                    numQuestions = questions.length;
 
-            // Update the question number span
-            questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);
+                    // Update the question number span
+                    questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);
 
-            // Show the main div and hide this div
-            $("#main-body").css("display", "block");
-            $("#session-id-entering-modal").css("display", "none");
+                    // Show the main div and hide this div
+                    $("#main-body").css("display", "block");
+                    $("#session-id-entering-modal").css("display", "none");
 
-            // Make the session ID appear when hovering over the title
-            $("#main-title").prop("title", `Session ID: ${sessionID}`);
+                    // Make the session ID show up beneath the main header
+                    $("#session-id-span").html(`Session ID: <code>${sessionIDInput.val()}</code>`);
+                }
+            } catch (e) {  // Likely that the request timed out
+                $("#submission-errors").text("Request timed out. Try again in a while.");
+            }
         });
-    } else {  // Session ID is empty
+    } else if (sessionIDInput.val() === "") {  // Session ID is empty
         $("#submission-errors").text("Session ID cannot be empty.");
+    } else {  // Session passcode is empty
+        $("#submission-errors").text("Session passcode cannot be empty.");
     }
 });
 
