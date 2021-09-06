@@ -311,6 +311,46 @@ def update_session():
         return dumps({"outcome": "error", "msg": f"Invalid question number '{data['question_num']}'."})
 
 
+@app.route("/code-only/reset-session", methods=["POST"])
+@limiter.limit("1/3second")
+def reset_session():
+    # Get the data from the submitted form
+    data = request.form
+
+    # Ensure that all required data is sent
+    required_labels = ["session_id", "session_passcode"]
+
+    for required_label in required_labels:
+        if required_label not in data:
+            return dumps({"outcome": "error", "msg": f"The `{required_label}` must be provided."})
+
+    # Update session data
+    try:
+        # Get the existing session data on the redis server
+        session_data = loads(redisDB.get(data["session_id"]))
+
+        # Check if the submitted passcode is correct
+        if session_data["passcode"] != data["session_passcode"]:
+            return dumps({"outcome": "error",
+                          "msg": f"Incorrect passcode for session with ID '<code>{data['session_id']}</code>'."})
+
+        # Modify the question number
+        session_data["current_qn"] = 1
+
+        # Push the modified data back to the redis server
+        redisDB.set(data["session_id"], dumps(session_data))
+
+        # Also update expiry time
+        redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
+
+        return dumps({"outcome": "OK",
+                      "msg": f"Session reset successfully. Refresh the page for the changes to take effect."})
+
+    # If reached here then probably the session ID doesn't exist
+    except TypeError:
+        return dumps({"outcome": "error", "msg": f"Session ID '{data['session_id']}' does not exist."})
+
+
 @app.route("/code-only/extend-session-expiry", methods=["POST"])
 @limiter.limit("1/3second")
 def extend_session_expiry():

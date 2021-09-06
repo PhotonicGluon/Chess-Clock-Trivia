@@ -2,10 +2,11 @@
 let sessionIDInput = $("#session-id");
 let sessionPasscodeInput = $("#session-passcode");
 
+let extendExpiryButton = $("#extend-expiry");
 let getNextQuestionButton = $("#get-next-question");
+let resetSessionButton = $("#reset-session");
 let submitSessionIDButton = $("#submit-session-id");
 let updateSessionButton = $("#update-session");
-let extendExpiryButton = $("#extend-expiry");
 
 let answerSpan = $("#answer");
 let questionSpan = $("#question");
@@ -17,6 +18,31 @@ let questionNumber = 1;  // Current (relative) question number
 let questions = null;  // Variable to store the list of questions that will be obtained from the server
 let totalNumQuestions = null;  // Number of questions (in total) given the selected topics
 let numQuestions = null;
+
+// HELPER FUNCTIONS
+function updateSessionDone(data) {
+    // Parse response from server
+    data = JSON.parse(data);
+
+    // Show response from server
+    $("#server-response").text(data["msg"]);
+
+    // Disable the buttons
+    updateSessionButton.addClass("button-disabled");
+    resetSessionButton.addClass("button-disabled");
+    extendExpiryButton.addClass("button-disabled");
+
+    // Wait for 3 seconds
+    setTimeout(() => {
+        // Enable the buttons
+        updateSessionButton.removeClass("button-disabled");
+        resetSessionButton.removeClass("button-disabled");
+        extendExpiryButton.removeClass("button-disabled");
+
+        // Clear the response text
+        $("#server-response").text("");
+    }, 3000);
+}
 
 // MAIN CODE
 // Code to be run once the user presses Enter/Return whilst on the "Session ID" field
@@ -113,7 +139,7 @@ getNextQuestionButton.click(() => {
     }
 });
 
-// Code to be run when the user clicks on "Extend Session Expiry By 1 Hour"
+// Code to be run when the user clicks on "Update Session on Server"
 updateSessionButton.click(() => {
     // Call the update session function on the server
     $.ajax({
@@ -124,32 +150,25 @@ updateSessionButton.click(() => {
             "session_passcode": sessionPasscode,
             "question_num": initialQuestionNumber + questionNumber - 1
         }
-    }).done((data) => {
-        // Parse response from server
-        data = JSON.parse(data);
-
-        // Show response from server
-        $("#server-response").text(data["msg"]);
-
-        // Disable the buttons
-        updateSessionButton.addClass("button-disabled");
-        extendExpiryButton.addClass("button-disabled");
-
-        // Wait for 3 seconds
-        setTimeout(() => {
-            // Enable the buttons
-            updateSessionButton.removeClass("button-disabled");
-            extendExpiryButton.removeClass("button-disabled");
-
-            // Clear the response text
-            $("#server-response").text("");
-        }, 3000);
-    });
+    }).done(updateSessionDone);
 });
 
-// Code to be run when the user clicks on "Update Session on Server"
+// Code to be run when the user clicks on "Reset Session Progress on Server"
+resetSessionButton.click(() => {
+    // Call the reset session function on the server
+    $.ajax({
+        url: "/code-only/reset-session",
+        method: "POST",
+        data: {
+            "session_id": sessionID,
+            "session_passcode": sessionPasscode
+        }
+    }).done(updateSessionDone);
+});
+
+// Code to be run when the user clicks on "Extend Session Expiry By 1 Hour"
 extendExpiryButton.click(() => {
-    // Call the update session function on the server
+    // Call the extend session expiry function on the server
     $.ajax({
         url: "/code-only/extend-session-expiry",
         method: "POST",
@@ -157,25 +176,5 @@ extendExpiryButton.click(() => {
             "session_id": sessionID,
             "session_passcode": sessionPasscode
         }
-    }).done((data) => {
-        // Parse response from server
-        data = JSON.parse(data);
-
-        // Show response from server
-        $("#server-response").text(data["msg"]);
-
-        // Disable the buttons
-        updateSessionButton.addClass("button-disabled");
-        extendExpiryButton.addClass("button-disabled");
-
-        // Wait for 3 seconds
-        setTimeout(() => {
-            // Enable the buttons
-            updateSessionButton.removeClass("button-disabled");
-            extendExpiryButton.removeClass("button-disabled");
-
-            // Clear the response text
-            $("#server-response").text("");
-        }, 3000);
-    });
+    }).done(updateSessionDone);
 });
