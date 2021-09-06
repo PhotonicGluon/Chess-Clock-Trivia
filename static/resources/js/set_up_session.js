@@ -3,7 +3,9 @@ let sessionIDInput = $("#session-id");
 let sessionPasscodeInput = $("#session-passcode");
 let sessionSeedInput = $("#session-seed");
 
+let deselectAllTopicsButton = $("#deselect-all-topics");
 let setUpSessionButton = $("#set-up-session");
+let selectAllTopicsButton = $("#select-all-topics");
 
 let outcomeSpan = $("#outcome");
 
@@ -24,12 +26,31 @@ $(document).ready(() => {
     sessionSeedInput.prop("value", suggestedSeedValue);
 });
 
+// Code to be run if the "Select All Topics" button is clicked
+selectAllTopicsButton.click(() => {
+    $("input[id^='topic-selector']").each((index, element) => {
+        element.checked = true;
+    });
+});
+
+// Code to be run if the "Deselect All Topics" button is clicked
+deselectAllTopicsButton.click(() => {
+    $("input[id^='topic-selector']").each((index, element) => {
+        element.checked = false;
+    });
+});
+
 // Code to be run once the "Set Up Session" button is clicked
 setUpSessionButton.click(() => {
     // Get input data
     let sessionID = sessionIDInput.val();
     let sessionPasscode = sessionPasscodeInput.val();
     let sessionSeed = sessionSeedInput.val();
+
+    let sessionTopics = [];
+    $("input[id^='topic-selector']:checked").each((index, element) => {
+        sessionTopics.push(element.value);
+    });
 
     // Declare variables for the validation of data
     let validData = true;
@@ -51,6 +72,11 @@ setUpSessionButton.click(() => {
         errorMsg += "<li>Session seed cannot be empty.</li>";
     }
 
+    if (sessionTopics.length === 0) {
+        validData = false;
+        errorMsg += "<li>At least one topic must be selected.</li>";
+    }
+
     // Check if the data is valid
     if (validData) {
         // Set up session by calling server function
@@ -60,7 +86,8 @@ setUpSessionButton.click(() => {
             data: {
                 "session_id": sessionID,
                 "session_passcode": sessionPasscode,
-                "session_seed": sessionSeed
+                "session_seed": sessionSeed,
+                "session_topics": JSON.stringify(sessionTopics)
             }
         }).done((data) => {
             try {
@@ -70,7 +97,7 @@ setUpSessionButton.click(() => {
                 // Check the outcome
                 if (data["outcome"] === "error") {
                     // Display the error
-                    outcomeSpan.text(data["msg"]);
+                    outcomeSpan.html(data["msg"]);
                     outcomeSpan.css("color", "red");
 
                 } else {  // Assume it is OK

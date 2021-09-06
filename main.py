@@ -37,11 +37,11 @@ EXPIRY_AFTER = 3600  # How many seconds before a session expires (assuming no he
 # Get the timezone
 timezone = strftime(" %z", gmtime())  # Note that there is a space before this
 
-# Get the list of questions from the `TRIVIA_QUESTIONS_FILE`
+# Get the list of topics and questions from the `TRIVIA_QUESTIONS_FILE`
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
     csvReader = DictReader(f)
     questions = [line for line in csvReader]
-    numQuestions = len(questions)
+    topics = sorted(list(set([question["Topic"] for question in questions])))  # Only keep distinct topics
 
 # Get the list of seed words from the `SEED_WORDS_FILE`
 with open(SEED_WORDS_FILE, "r") as f:
@@ -87,6 +87,7 @@ def get_questions_from_session(session_id):
     # Return the questions from the session
     return dumps({
         "outcome": "OK",
+        "total_num_qns": session["total_num_qns"],
         "initial_qn_num": session["current_qn"],
         "questions": session["questions"][current_qn_index:]
     })
@@ -96,19 +97,19 @@ def get_questions_from_session(session_id):
 @app.route("/")
 @limiter.limit("3/second")
 def main_page():
-    return render_template("main_page.html", num_questions=numQuestions, last_updated=lastUpdated)
+    return render_template("main_page.html", last_updated=lastUpdated)
 
 
 @app.route("/set-up")
 @limiter.limit("3/second")
 def set_up():
-    return render_template("set_up_session.html", last_updated=lastUpdated)
+    return render_template("set_up_session.html", last_updated=lastUpdated, topics=topics)
 
 
 @app.route("/questioner")
 @limiter.limit("3/second")
 def questioner():
-    return render_template("questioner.html", num_questions=numQuestions, last_updated=lastUpdated)
+    return render_template("questioner.html", last_updated=lastUpdated)
 
 
 # DETAIL PAGES
@@ -166,27 +167,37 @@ def set_up_session():
     data = request.form
 
     # Ensure that all required data is sent
-    required_labels = ["session_id", "session_passcode", "session_seed"]
+    required_labels = ["session_id", "session_passcode", "session_seed", "session_topics"]
 
     for required_label in required_labels:
         if required_label not in data:
             return dumps({"outcome": "error", "msg": f"The `{required_label}` must be provided."})
 
+    # Parse the incoming data
+    session_id = data["session_id"]
+    session_passcode = data["session_passcode"]
+    session_seed = data["session_seed"]
+    session_topics = set(loads(data["session_topics"]))
+
     # Validate data
     valid_data = True
     error_msgs = []
 
-    if len(data["session_id"]) == 0:
+    if len(session_id) == 0:
         valid_data = False
         error_msgs.append("Session ID cannot be empty.")
 
-    if len(data["session_passcode"]) == 0:
+    if len(session_passcode) == 0:
         valid_data = False
         error_msgs.append("Session passcode cannot be empty.")
 
-    if len(data["session_seed"]) == 0:
+    if len(session_seed) == 0:
         valid_data = False
         error_msgs.append("Session seed cannot be empty.")
+
+    if len(session_topics) == 0:
+        valid_data = False
+        error_msgs.append("At least one topic must be selected.")
 
     # Check if data is invalid
     if not valid_data:
@@ -195,17 +206,24 @@ def set_up_session():
 
     # Check if the session does not already exist
     if redisDB.get(data["session_id"]) is None:
+        # Get only the selected topics' questions
+        questions_copy = []
+
+        for question in questions:
+            if question["Topic"] in session_topics:
+                questions_copy.append(question)
+
         # Initialise the random number generator with the session seed
         random_generator = Random(data["session_seed"])
 
-        # Shuffle a copy of the `questions` array
-        questions_copy = questions.copy()
+        # Shuffle the `questions_copy` array
         random_generator.shuffle(questions_copy)
 
         # Create the session data
         session_data = {
             "questions": questions_copy,
             "passcode": data["session_passcode"],
+            "total_num_qns": len(questions_copy),
             "current_qn": 1
         }
 

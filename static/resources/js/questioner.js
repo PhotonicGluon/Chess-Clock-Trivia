@@ -15,11 +15,21 @@ let questionNumberSpan = $("#question-number");
 let initialQuestionNumber = null;  // Initial question number as obtained from the server
 let questionNumber = 1;  // Current (relative) question number
 let questions = null;  // Variable to store the list of questions that will be obtained from the server
+let totalNumQuestions = null;  // Number of questions (in total) given the selected topics
 let numQuestions = null;
 
 // MAIN CODE
-// Code to be run once the user presses Enter/Return whilst on the "Enter Session ID" field
+// Code to be run once the user presses Enter/Return whilst on the "Session ID" field
 sessionIDInput.keyup((event) => {
+    if (event.which === 13) {  // Key pressed was the Enter/Return key
+        // Click on the submit session ID button
+        event.preventDefault();
+        submitSessionIDButton.click();
+    }
+});
+
+// Code to be run once the user presses Enter/Return whilst on the "Session Passcode" field
+sessionPasscodeInput.keyup((event) => {
     if (event.which === 13) {  // Key pressed was the Enter/Return key
         // Click on the submit session ID button
         event.preventDefault();
@@ -52,13 +62,16 @@ submitSessionIDButton.click(() => {
                     $("#submission-errors").html(data["msg"]);
 
                 } else {  // Assume is OK
-                    // Get the initial question number, then update `questions` array and the question count
+                    // Get values from the JSON data
                     initialQuestionNumber = data["initial_qn_num"];
                     questions = data["questions"];
+                    totalNumQuestions = data["total_num_qns"];
+
+                    // Get question count
                     numQuestions = questions.length;
 
                     // Update the question number span
-                    questionNumberSpan.text(`(${TOTAL_NUM_QUESTIONS - initialQuestionNumber + 1} left)`);
+                    questionNumberSpan.text(`(${totalNumQuestions - initialQuestionNumber + 1} left)`);
 
                     // Show the main div and hide this div
                     $("#main-body").css("display", "block");
@@ -87,7 +100,7 @@ getNextQuestionButton.click(() => {
         let question = questions[questionNumber - 1]["Question"];
 
         // Update the question number, question and answer spans
-        questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${TOTAL_NUM_QUESTIONS}`);
+        questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${totalNumQuestions}`);
         questionSpan.html(question);
         answerSpan.html("Answer: " + answer);
 

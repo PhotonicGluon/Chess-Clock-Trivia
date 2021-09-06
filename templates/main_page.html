@@ -10,12 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 {% endblock %}
 
-{% block header_scripts %}
-    <script>
-        const TOTAL_NUM_QUESTIONS = {{ num_questions }};
-    </script>
-{% endblock %}
-
 {% block content %}
     <!-- This will be shown first -->
     <div class="center-screen" id="session-id-entering-modal">
@@ -31,7 +25,7 @@
                                                    placeholder="Enter the session ID here"><br>
             <h2>Session Passcode</h2>
             <label for="session-passcode"></label><input class="center" id="session-passcode" type="password"
-                                                   placeholder="Enter the session passcode here"><br>
+                                                         placeholder="Enter the session passcode here"><br>
             <a class="button" id="submit-session-id">Submit Session ID</a><br><br>
             <span class="error-text" id="submission-errors"></span>
         </div>
@@ -101,7 +95,7 @@
         <div class="row center">
             <h2>Number of Teams</h2>
             <label for="num-teams"></label><input class="input-field" id="num-teams" type="number" min="2"
-                                                    value="2">
+                                                  value="2">
             <h2>Time Limit (in seconds)</h2>
             <label for="time-limit"></label><input class="input-field" id="time-limit" type="number" min="1" value="60">
             <h2>Penalty Time (in seconds)</h2>

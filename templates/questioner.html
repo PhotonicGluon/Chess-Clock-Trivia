@@ -7,12 +7,6 @@
           href="{{ url_for("static", filename="resources/css/questioner.less") }}">
 {% endblock %}
 
-{% block header_scripts %}
-    <script>
-        const TOTAL_NUM_QUESTIONS = {{ num_questions }};
-    </script>
-{% endblock %}
-
 {% block content %}
     <!-- This will be shown first -->
     <div class="center-screen" id="session-id-entering-modal">

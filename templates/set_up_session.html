@@ -3,12 +3,16 @@
 {% block title %}Chess Clock Trivia - Set Up Session{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet/less" type="text/css" href="{{ url_for("static", filename="resources/css/set_up_session.less") }}">
+    <link rel="stylesheet/less" type="text/css"
+          href="{{ url_for("static", filename="resources/css/set_up_session.less") }}">
 {% endblock %}
 
 {% block content %}
     <div id="main-body">
         <h1 id="main-title">Chess Clock Trivia - Set Up Session</h1>
+        <p class="center">
+            <span id="last-updated">Updated: {{ last_updated }}</span>
+        </p>
 
         <div class="row center">
             <h2>Session ID</h2>
@@ -22,11 +26,23 @@
             <h2>Session Seed</h2>
             <span>This is the seed that will be used to randomise the question order.</span>
             <label for="session-seed"></label><input class="center" id="session-seed" type="text">
+
+            <h2>Topic Selection</h2>
+            <span>From the list below, select the topics that should be in the trivia game.</span><br><br>
+            <a class="button" id="select-all-topics">Select All Topics</a>
+            <a class="button" id="deselect-all-topics">Deselect All Topics</a><br><br>
+            <div style="text-align: left; width: 50%">
+                {% for topic in topics %}
+                    <div style="width: 50%; margin: 0 auto;">
+                        <input type="checkbox" value="{{ topic }}" name="topic-selector" id="topic-selector-{{ topic }}"
+                               checked>
+                        <label for="topic-selector-{{ topic }}">{{ topic }}</label>
+                    </div>
+                {% endfor %}
+            </div>
             <br><br>
             <a class="button" id="set-up-session">Set Up Session</a><br><br>
             <span id="outcome"></span>
-            <br>
-            <span id="last-updated">Updated: {{ last_updated }}</span>
         </div>
     </div>
 {% endblock %}
