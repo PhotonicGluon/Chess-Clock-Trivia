@@ -4,7 +4,6 @@ Todo:
         - How to run the Redis server
     - Update the rules/protocols on how to set up the session
         - Recent changes warrant a new set of instructions on how to operate
-    - Add trial questions for teams to try out chess clock trivia first
     - Allow uploading of custom trivia questions
 
 Fixme:
