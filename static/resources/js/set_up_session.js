@@ -1,4 +1,5 @@
 // GET ELEMENTS
+let customTriviaQuestionsInput = $("#custom-trivia-qns");
 let sessionIDInput = $("#session-id");
 let sessionPasscodeInput = $("#session-passcode");
 let sessionSeedInput = $("#session-seed");
@@ -41,7 +42,7 @@ deselectAllTopicsButton.click(() => {
 });
 
 // Code to be run once the "Set Up Session" button is clicked
-setUpSessionButton.click(() => {
+setUpSessionButton.click(async () => {
     // Get input data
     let sessionID = sessionIDInput.val();
     let sessionPasscode = sessionPasscodeInput.val();
@@ -79,6 +80,15 @@ setUpSessionButton.click(() => {
 
     // Check if the data is valid
     if (validData) {
+        // Check if custom trivia questions were added
+        let customTriviaQuestions = null;
+        let customTriviaQuestionsFile = customTriviaQuestionsInput.prop("files");
+
+        if (customTriviaQuestionsFile.length !== 0) {
+            // Get the file data
+            customTriviaQuestions = await $("#custom-trivia-qns").prop("files")[0].text();
+        }
+
         // Set up session by calling server function
         $.ajax({
             url: "/code-only/set-up-session",
@@ -87,7 +97,8 @@ setUpSessionButton.click(() => {
                 "session_id": sessionID,
                 "session_passcode": sessionPasscode,
                 "session_seed": sessionSeed,
-                "session_topics": JSON.stringify(sessionTopics)
+                "session_topics": JSON.stringify(sessionTopics),
+                "custom_qns": customTriviaQuestions
             }
         }).done((data) => {
             try {

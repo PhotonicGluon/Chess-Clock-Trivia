@@ -11,8 +11,9 @@ Description: Main flask app file.
 
 # IMPORTS
 import os
-from csv import DictReader
+from csv import DictReader, Error
 from datetime import datetime, timedelta
+from io import StringIO
 from json import dumps, loads
 from random import choices, Random
 from time import strftime, gmtime
@@ -204,10 +205,33 @@ def set_up_session():
         # Return a JSON object with the error message
         return dumps({"outcome": "error", "msg": " ".join(error_msgs)})
 
+    # Try and read the custom questions
+    custom_qns = []
+    custom_qns_raw = data["custom_qns"]
+
+    if custom_qns_raw != "":  # There are custom questions
+        try:
+            # Try to parse it as a CSV string
+            custom_qns_reader = DictReader(StringIO(custom_qns_raw))
+
+            # Check if the needed headers are present
+            if not {"Topic", "Question", "Answer"}.issubset(set(custom_qns_reader.fieldnames)):
+                # Not all headers present; raise error
+                return dumps({"outcome": "error",
+                              "msg": f"Not all required headers present in custom trivia questions file."})
+
+            # If all headers present, simply create a custom questions list and add the rows there
+            for question in custom_qns_reader:
+                custom_qns.append(question)
+
+        except Error:  # An error occurred when reading the CSV file
+            return dumps({"outcome": "error",
+                          "msg": f"The custom trivia questions file needs to be a <code>.csv</code> file."})
+
     # Check if the session does not already exist
     if redisDB.get(data["session_id"]) is None:
         # Get only the selected topics' questions
-        questions_copy = []
+        questions_copy = custom_qns  # Include the custom questions already
 
         for question in questions:
             if question["Topic"] in session_topics:
