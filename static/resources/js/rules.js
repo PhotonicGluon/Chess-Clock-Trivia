@@ -1,8 +1,5 @@
 // MAIN CODE
 $(document).ready(() => {
-    // Disable the heartbeat interval for this page
-    clearInterval(heartbeat);
-
     // Define the markdown converter
     let converter = new showdown.Converter();
 

@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-09-04
+Updated on 2021-09-06
 
 Copyright © Ryan Kan
 
@@ -15,6 +15,7 @@ from csv import DictReader
 from datetime import datetime, timedelta
 from json import dumps, loads
 from random import choices, Random
+from time import strftime, gmtime
 
 import redis
 from flask import Flask, render_template, send_file, request
@@ -31,6 +32,10 @@ TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
 
 SEED_LENGTH = 5  # Number of words in the seed
 EXPIRY_AFTER = 3600  # How many seconds before a session expires (assuming no heartbeat)
+
+# SETUP
+# Get the timezone
+timezone = strftime(" %z", gmtime())  # Note that there is a space before this
 
 # Get the list of questions from the `TRIVIA_QUESTIONS_FILE`
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
@@ -53,7 +58,7 @@ with open(CREDITS_FILE, "r") as f:
 # Read the "last updated" value from th `LAST_UPDATED_TIMESTAMP_FILE`
 with open(LAST_UPDATED_TIMESTAMP_FILE, "r") as f:
     lastUpdatedTimestamp = int(f.read())
-    lastUpdated = datetime.fromtimestamp(lastUpdatedTimestamp).strftime("%Y-%m-%d %H:%M %Z")
+    lastUpdated = datetime.fromtimestamp(lastUpdatedTimestamp).strftime("%Y-%m-%d %H:%M") + timezone
 
 # Set up the app instance with rate limiting capabilities
 app = Flask(__name__)
@@ -74,17 +79,17 @@ def get_questions_from_session(session_id):
     try:
         session = loads(redisDB.get(session_id))
     except TypeError:
-        return {"error": f"Session ID '<code>{session_id}</code>' does not exist."}
+        return dumps({"error": f"Session ID '<code>{session_id}</code>' does not exist."})
 
     # Get the first question that should be shown
     current_qn_index = session["current_qn"] - 1  # We want to use zero-based indexing
 
     # Return the questions from the session
-    return {
+    return dumps({
         "outcome": "OK",
         "initial_qn_num": session["current_qn"],
         "questions": session["questions"][current_qn_index:]
-    }
+    })
 
 
 # MAIN PAGES
@@ -120,25 +125,6 @@ def credits_page():
 
 
 # CODE-ONLY PAGES
-@app.route("/code-only/heartbeat", methods=["POST"])
-@limiter.limit("1/minute")
-def heartbeat():
-    # Get the data from the submitted form
-    data = request.form
-
-    # Ensure that a session ID was sent
-    if "session_id" not in data or data["session_id"] == "":
-        return "The `session_id` must be provided for the heartbeat to work."
-
-    # Update the expiry time in that session
-    try:
-        redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
-    except KeyError:
-        return f"Session ID '{data['session_id']}' does not exist so heartbeat failed."
-
-    return f"Heartbeat successful for session '{data['session_id']}'."
-
-
 @app.route("/code-only/generate-suggested-session-id", methods=["POST"])
 @limiter.limit("3/second")
 def generate_suggested_session_id():
@@ -170,7 +156,7 @@ def get_questions():
         return dumps({"outcome": "error", "msg": f"Session ID '<code>{data['session_id']}</code>' does not exist."})
 
     # Return the questions from that session
-    return dumps(get_questions_from_session(data["session_id"]))
+    return get_questions_from_session(data["session_id"])
 
 
 @app.route("/code-only/set-up-session", methods=["POST"])
@@ -214,7 +200,7 @@ def set_up_session():
 
 
 @app.route("/code-only/update-session", methods=["POST"])
-@limiter.limit("1/5second")
+@limiter.limit("1/3second")
 def update_session():
     # Get the data from the submitted form
     data = request.form
@@ -254,6 +240,43 @@ def update_session():
     # If reached here then probably the question number is not valid
     except ValueError:
         return dumps({"outcome": "error", "msg": f"Invalid question number '{data['question_num']}'."})
+
+
+@app.route("/code-only/extend-session-expiry", methods=["POST"])
+@limiter.limit("1/3second")
+def extend_session_expiry():
+    # Get the data from the submitted form
+    data = request.form
+
+    # Ensure that all required data is sent
+    required_labels = ["session_id", "session_passcode"]
+
+    for required_label in required_labels:
+        if required_label not in data:
+            return dumps({"outcome": "error", "msg": f"The `{required_label}` must be provided."})
+
+    # Update session data
+    try:
+        # Get the existing session data on the redis server
+        session_data = loads(redisDB.get(data["session_id"]))
+
+        # Check if the submitted passcode is correct
+        if session_data["passcode"] != data["session_passcode"]:
+            return dumps({"outcome": "error",
+                          "msg": f"Incorrect passcode for session with ID '<code>{data['session_id']}</code>'."})
+
+        # Update expiry time
+        redisDB.expire(data["session_id"], timedelta(seconds=EXPIRY_AFTER))
+
+        # Generate new expiry time
+        new_expiry_time = (datetime.now() + timedelta(seconds=EXPIRY_AFTER)).strftime("%Y-%m-%d %H:%M") + timezone
+
+        return dumps({"outcome": "OK",
+                      "msg": f"Session expiry extended. Session will now expire at {new_expiry_time}."})
+
+    # If reached here then probably the session ID doesn't exist
+    except TypeError:
+        return dumps({"outcome": "error", "msg": f"Session ID '{data['session_id']}' does not exist."})
 
 
 # ERROR PAGES

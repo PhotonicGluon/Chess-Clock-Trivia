@@ -30,7 +30,7 @@
 
             <p class="center">
                 Head <a href="{{ url_for("set_up") }}" target="_blank">here</a> to set up the session.
-                <br>
+                <br><br>
                 Please go <a href="{{ url_for("rules") }}" target="_blank">here</a> to obtain the protocols that
                 the <em>Questioner</em> should follow.<br>
                 Go <a href="{{ url_for("credits_page") }}" target="_blank">here</a> for the credits.
@@ -61,6 +61,8 @@
         <!-- Update session on server section -->
         <div class="row center">
             <a class="button" id="update-session">Update Session on Server</a><br><br>
+            <a class="button" id="extend-expiry">Extend Session Expiry By 1 Hour</a><br>
+            <br>
             <span id="server-response"></span>
         </div>
     </div>
