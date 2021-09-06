@@ -11,6 +11,7 @@ Description: Main flask app file.
 
 # IMPORTS
 import os
+from collections import defaultdict
 from csv import DictReader, Error
 from datetime import datetime, timedelta
 from io import StringIO
@@ -42,7 +43,6 @@ timezone = strftime(" %z", gmtime())  # Note that there is a space before this
 with open(TRIVIA_QUESTIONS_FILE, "r") as f:
     csvReader = DictReader(f)
     questions = [line for line in csvReader]
-    topics = sorted(list(set([question["Topic"] for question in questions])))  # Only keep distinct topics
 
 # Get the list of seed words from the `SEED_WORDS_FILE`
 with open(SEED_WORDS_FILE, "r") as f:
@@ -60,6 +60,12 @@ with open(CREDITS_FILE, "r") as f:
 with open(LAST_UPDATED_TIMESTAMP_FILE, "r") as f:
     lastUpdatedTimestamp = int(f.read())
     lastUpdated = datetime.fromtimestamp(lastUpdatedTimestamp).strftime("%Y-%m-%d %H:%M") + timezone
+
+# Count the number of questions attached to each topic
+topicCount = defaultdict(int)
+
+for question in questions:
+    topicCount[question["Topic"]] += 1
 
 # Set up the app instance with rate limiting capabilities
 app = Flask(__name__)
@@ -104,7 +110,7 @@ def main_page():
 @app.route("/set-up")
 @limiter.limit("3/second")
 def set_up():
-    return render_template("set_up_session.html", last_updated=lastUpdated, topics=topics)
+    return render_template("set_up_session.html", last_updated=lastUpdated, topic_count=topicCount)
 
 
 @app.route("/questioner")
@@ -221,8 +227,8 @@ def set_up_session():
                               "msg": f"Not all required headers present in custom trivia questions file."})
 
             # If all headers present, simply create a custom questions list and add the rows there
-            for question in custom_qns_reader:
-                custom_qns.append(question)
+            for custom_question in custom_qns_reader:
+                custom_qns.append(custom_question)
 
         except Error:  # An error occurred when reading the CSV file
             return dumps({"outcome": "error",
@@ -233,9 +239,9 @@ def set_up_session():
         # Get only the selected topics' questions
         questions_copy = custom_qns  # Include the custom questions already
 
-        for question in questions:
+        for final_question in questions:
             if question["Topic"] in session_topics:
-                questions_copy.append(question)
+                questions_copy.append(final_question)
 
         # Initialise the random number generator with the session seed
         random_generator = Random(data["session_seed"])
