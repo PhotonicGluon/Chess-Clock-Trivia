@@ -9,5 +9,5 @@ Todo:
     - Allow uploading of custom trivia questions
 
 Fixme:
-    - Validate the data on the server side
+    - Add unittests
     - Check that the code on ALL the pages works with the new "set up session" page

@@ -172,6 +172,27 @@ def set_up_session():
         if required_label not in data:
             return dumps({"outcome": "error", "msg": f"The `{required_label}` must be provided."})
 
+    # Validate data
+    valid_data = True
+    error_msgs = []
+
+    if len(data["session_id"]) == 0:
+        valid_data = False
+        error_msgs.append("Session ID cannot be empty.")
+
+    if len(data["session_passcode"]) == 0:
+        valid_data = False
+        error_msgs.append("Session passcode cannot be empty.")
+
+    if len(data["session_seed"]) == 0:
+        valid_data = False
+        error_msgs.append("Session seed cannot be empty.")
+
+    # Check if data is invalid
+    if not valid_data:
+        # Return a JSON object with the error message
+        return dumps({"outcome": "error", "msg": " ".join(error_msgs)})
+
     # Check if the session does not already exist
     if redisDB.get(data["session_id"]) is None:
         # Initialise the random number generator with the session seed
