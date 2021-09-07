@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-09-06
+Updated on 2021-09-07
 
 Copyright © Ryan Kan
 
@@ -240,7 +240,7 @@ def set_up_session():
         questions_copy = custom_qns  # Include the custom questions already
 
         for final_question in questions:
-            if question["Topic"] in session_topics:
+            if final_question["Topic"] in session_topics:
                 questions_copy.append(final_question)
 
         # Initialise the random number generator with the session seed
