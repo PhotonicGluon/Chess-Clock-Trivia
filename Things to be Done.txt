@@ -2,9 +2,9 @@ Todo:
     - Fill in `README.md`
         - How to run the server
         - How to run the Redis server
+    - Add unittests
 
 Fixme:
-    - Add unittests
     - Check that the code on ALL the pages works with the new "set up session" page
     - Check that the topic selection code (and topic count code) works on ALL pages
     - Check that the custom trivia questions code works on ALL pages
