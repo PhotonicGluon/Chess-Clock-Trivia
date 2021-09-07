@@ -389,6 +389,20 @@ function handleTeamElimination() {
 
     // Add this team to the list of eliminated teams
     eliminatedTeams.push(activeTeam);
+
+    // Change the active team to the next possible team
+    let numPlayers = getNumClocks();
+
+    for (let i = activeTeam; i < activeTeam + numPlayers; i++) {
+        // Generate the team number
+        let teamNumber = i % numPlayers + 1;
+
+        // Check if the team is not eliminated
+        if (!eliminatedTeams.includes(teamNumber)) {
+            // Set that team to be the new active team
+            activeTeam = teamNumber;
+        }
+    }
 }
 
 // Code to be run when the "Deduct Time" button is pressed
@@ -410,7 +424,7 @@ function deductTime(button) {
             times[teamNumber] = 0
 
             // Handle that team's elimination
-            handleTeamElimination();  // This will update the active team
+            handleTeamElimination();  // This will update the active team for the winning team check
 
             // Check how many teams are active now
             if (eliminatedTeams.length === getNumTeams() - 1) {
