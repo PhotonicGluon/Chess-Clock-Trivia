@@ -101,5 +101,8 @@ Sometimes, an error like `ConnectionError: Cannot connect to redis server. Has t
 be shown. In this case, check if the redis server has been started, or check if you have entered the correct port for
 the `REDIS_URL`.
 
+## Rules and Protocols
+The rules and protocols for Chess Clock Trivia can be obtained [here](static/resources/pdf/rules.pdf) as a PDF file.
+
 ## Credits and Licenses
 Open [this document](data/credits.md) to see the full list of credits and licenses.

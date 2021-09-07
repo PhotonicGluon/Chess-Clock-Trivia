@@ -45,10 +45,15 @@
             </div>
 
             <h2>Custom Trivia Questions</h2>
-            <span>
+            <p>
                 You can upload your own trivia questions by uploading a <code>.csv</code> file with the custom trivia
                 questions below.
-            </span><br>
+                <br>
+                Download a sample Excel (<code>.xlsx</code>) file by
+                <a href="{{ url_for("static", filename="resources/other/CustomQuestions.xlsx") }}">clicking here</a>
+                or download a sample CSV (<code>.csv</code>) file by
+                <a href="{{ url_for("static", filename="resources/other/CustomQuestions.csv") }}">clicking here</a>.
+            </p><br>
             <input type="file" id="custom-trivia-qns" accept="text/csv">
 
             <br><br><a class="button" id="set-up-session">Set Up Session</a><br><br>

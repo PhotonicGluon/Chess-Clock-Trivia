@@ -28,7 +28,7 @@ from werkzeug.exceptions import HTTPException
 # CONSTANTS
 CREDITS_FILE = "data/credits.md"
 LAST_UPDATED_TIMESTAMP_FILE = "data/last-updated-timestamp.txt"
-RULES_FILE = "data/rules.md"
+RULES_FILE = "static/resources/pdf/rules.pdf"
 SEED_WORDS_FILE = "data/seed-words.txt"
 TRIVIA_QUESTIONS_FILE = "data/trivia.csv"
 
@@ -47,10 +47,6 @@ with open(TRIVIA_QUESTIONS_FILE, "r") as f:
 # Get the list of seed words from the `SEED_WORDS_FILE`
 with open(SEED_WORDS_FILE, "r") as f:
     seedWords = [x.strip() for x in f.readlines()]
-
-# Read the rules from the `RULES_FILE`
-with open(RULES_FILE, "r") as f:
-    rulesMD = f.read()  # The text in the `RULES_FILE` is markdown text
 
 # Read the credits/licences from the `CREDITS_FILE`
 with open(CREDITS_FILE, "r") as f:
@@ -123,7 +119,7 @@ def questioner():
 @app.route("/rules")
 @limiter.limit("3/second")
 def rules():
-    return render_template("rules.html", rules=rulesMD, last_updated=lastUpdated)
+    return send_file(RULES_FILE, attachment_filename="CCT-RulesAndProtocols.pdf")  # Just send the rules PDF file
 
 
 @app.route("/credits")
