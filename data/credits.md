@@ -1,4 +1,5 @@
-*Chess Clock Trivia* is a game made by [Ryan-Kan](https://github.com/Ryan-Kan).
+*Chess Clock Trivia* is a game made by [Ryan-Kan](https://github.com/Ryan-Kan). All trivia questions are the work of
+[Ryan-Kan](https://github.com/Ryan-Kan).
 
 This page is split into two sections - the credits and the licenses of the things that are used in this project.
 

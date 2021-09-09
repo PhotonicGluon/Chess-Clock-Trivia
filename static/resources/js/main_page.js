@@ -15,8 +15,8 @@ let numTeamsInput = $("#num-teams");
 let timeLimitInput = $("#time-limit");
 let penaltyTimeInput = $("#penalty-time");
 
-let submitSessionIDButton = $("#submit-session-id");
 let startGameButton = $("#start-game");
+let submitSessionIDButton = $("#submit-session-id");
 
 let questionSpan = $("#question");
 let questionNumberSpan = $("#question-number");
