@@ -73,22 +73,23 @@ setUpSessionButton.click(async () => {
         errorMsg += "<li>Session seed cannot be empty.</li>";
     }
 
-    if (sessionTopics.length === 0) {
+    // Check if custom trivia questions were added
+    let customTriviaQuestions = null;
+    let customTriviaQuestionsFile = customTriviaQuestionsInput.prop("files");
+
+    if (customTriviaQuestionsFile.length !== 0) {
+        // Get the file data
+        customTriviaQuestions = await $("#custom-trivia-qns").prop("files")[0].text();
+    }
+
+    // Check if either the topics or custom questions were provided
+    if (sessionTopics.length === 0 && customTriviaQuestionsFile.length === 0) {
         validData = false;
-        errorMsg += "<li>At least one topic must be selected.</li>";
+        errorMsg += "<li>At least one topic must be selected, or a custom trivia questions file must be provided.</li>";
     }
 
     // Check if the data is valid
     if (validData) {
-        // Check if custom trivia questions were added
-        let customTriviaQuestions = null;
-        let customTriviaQuestionsFile = customTriviaQuestionsInput.prop("files");
-
-        if (customTriviaQuestionsFile.length !== 0) {
-            // Get the file data
-            customTriviaQuestions = await $("#custom-trivia-qns").prop("files")[0].text();
-        }
-
         // Set up session by calling server function
         $.ajax({
             url: "/code-only/set-up-session",

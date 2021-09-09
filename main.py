@@ -2,7 +2,7 @@
 main.py
 
 Created on 2021-08-12
-Updated on 2021-09-07
+Updated on 2021-09-09
 
 Copyright © Ryan Kan
 
@@ -170,17 +170,21 @@ def set_up_session():
     data = request.form
 
     # Ensure that all required data is sent
-    required_labels = ["session_id", "session_passcode", "session_seed", "session_topics"]
+    required_labels = ["session_id", "session_passcode", "session_seed"]
 
     for required_label in required_labels:
         if required_label not in data:
             return dumps({"outcome": "error", "msg": f"The `{required_label}` must be provided."})
 
+    # Check if either the topics or custom questions were provided
+    if "session_topics" not in data and "custom_qns" not in data:
+        return dumps({"outcome": "error", "msg": f"Either `session_topics` or `custom_qns` must be provided."})
+
     # Parse the incoming data
     session_id = data["session_id"]
     session_passcode = data["session_passcode"]
     session_seed = data["session_seed"]
-    session_topics = set(loads(data["session_topics"]))
+    session_topics = set(loads(data["session_topics"])) if data["session_topics"] is not None else []
 
     # Validate data
     valid_data = True
@@ -198,7 +202,7 @@ def set_up_session():
         valid_data = False
         error_msgs.append("Session seed cannot be empty.")
 
-    if len(session_topics) == 0:
+    if "custom_qns" not in data and len(session_topics) == 0:
         valid_data = False
         error_msgs.append("At least one topic must be selected.")
 
