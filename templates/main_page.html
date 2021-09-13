@@ -14,8 +14,9 @@
     <!-- This will be shown first -->
     <div class="center-screen" id="session-id-entering-modal">
         <h1>Chess Clock Trivia</h1>
-        <span class="center error-text" id="mobile-warning">It is recommended to access the main page using a
-            device with a larger screen width.<br><br></span>
+        <span class="center error-text" id="mobile-warning">
+            It is recommended to access the main page using a device with a larger screen width.<br><br>
+        </span>
 
         <br>
 
@@ -87,7 +88,10 @@
         <div class="row center" id="question-area">
             <h2 class="question-header" id="question-header">Question <span id="question-number"></span></h2>
             <span id="question">Start the game to get the first question.</span><br>
-            <span id="topic">This is the topic of the current question.</span>
+            <span id="topic">This is the topic of the current question.</span><br>
+            <span class="answer-span">
+                Answer: <span class="blurred" id="answer" onclick="toggleBlur()">Answer Shown Here</span>
+            </span>
         </div>
         <hr>
 

@@ -18,6 +18,7 @@ let penaltyTimeInput = $("#penalty-time");
 let startGameButton = $("#start-game");
 let submitSessionIDButton = $("#submit-session-id");
 
+let answerSpan = $("#answer");
 let questionSpan = $("#question");
 let questionNumberSpan = $("#question-number");
 let topicSpan = $("#topic");
@@ -125,17 +126,23 @@ function getNumTeams() {
 
 function getNextQuestion(questionNum) {
     if (questionNum <= numQuestions) {  // Still have questions that can be asked
-        // Get the question and topic from the questions array
-        let topic = questions[questionNum - 1]["Topic"];
+        // Get the answer, topic, and question from the questions array
+        let answer = questions[questionNum - 1]["Answer"];
         let question = questions[questionNum - 1]["Question"];
+        let topic = questions[questionNum - 1]["Topic"];
 
-        // Update the question number, question and topic spans
+        // Set the answer span to be blurred
+        setBlur(true);
+
+        // Update the answer, question number, question, topic spans
+        answerSpan.html(answer);
         questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${totalNumQuestions}`);
         questionSpan.html(question);
         topicSpan.html("Topic: " + topic);
 
         // Increment question number
         questionNumber++;
+
     } else {  // No more questions
         // Clear the interval
         clearInterval(interval);
@@ -152,6 +159,7 @@ function getNextQuestion(questionNum) {
         $("#question-header").html("Finished!");
         questionSpan.text("There are no more questions!");
         topicSpan.html("Everyone who is <b>not</b> eliminated are winners!");
+        answerSpan.html("No Answer Here!");
 
         // Colour all non-eliminated teams' clocks green
         for (let i = 1; i <= numTeams; i++) {
@@ -162,6 +170,24 @@ function getNextQuestion(questionNum) {
 
         // Shoot some fireworks!
         confettiFireworks(10, 0.3);
+    }
+}
+
+function setBlur(is_blurred) {
+    if (is_blurred) {
+        answerSpan.addClass("blurred");
+
+    } else {
+        answerSpan.removeClass("blurred");
+    }
+}
+
+function toggleBlur() {
+    // Toggle blur
+    if (answerSpan.hasClass("blurred")) {
+        setBlur(false);  // Un-blur
+    } else {
+        setBlur(true);  // Blur
     }
 }
 
@@ -334,7 +360,7 @@ function toggleClock(button) {
         // Get the ID of the button that was called
         let buttonID = button.id;
 
-        // Check if the clock is currently running
+        // Check if the clock is currently paused
         if (isPaused) {
             // Change the button's text
             button.innerHTML = "Pause Clock";

@@ -1,0 +1,7 @@
+Todo:
+    - Add mobile styling on the session setup page
+    - Improve layout of pages
+
+Fixme:
+    - Fix bug where deducting time on a team whose clock is 0 will deduct time from other teams
+        - Root cause: eliminated team's button still can be pressed
