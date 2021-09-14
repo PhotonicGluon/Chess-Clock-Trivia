@@ -1,7 +1,2 @@
 Todo:
     - Update protocols
-
-Fixme:
-    - Fix bug where eliminated teams via "natural causes" will have their "Toggle Time Button" as "Pause Clock" instead
-      of the correct "Resume Clock"
-    - Fix bug where answer field is not updated when the game ends

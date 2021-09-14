@@ -163,7 +163,7 @@ function getNextQuestion() {
             $("#question-header").html("Finished!");
             questionSpan.text("There are no more questions!");
             topicSpan.html("Everyone who is <b>not</b> eliminated are winners!");
-            answerSpan.html("No Answer Here!");
+            answerSpan.text("No Answer Here!");
 
             // Colour all non-eliminated teams' clocks green
             for (let i = 1; i <= numTeams; i++) {
@@ -541,6 +541,9 @@ startGameButton.click(() => {
 
                     // Check if time limit exceeded
                     if (timeLeft < 0) {
+                        // Change "Toggle Clock" button text
+                        $(`#toggle-${activeTeam}`).text("Resume Clock");
+
                         // Handle that team's elimination
                         handleTeamElimination(activeTeam);  // Updates active team for the winning team check
 
@@ -610,6 +613,7 @@ function onlyOneRemains(teamNumber) {
 
     // Update the centre div to reflect that that team won
     $("#question-header").text("We have a winner!");
+    answerSpan.text("No Answer Here!");
     questionSpan.text(`Team "${$(`#team-name-${teamNumber}`).text()}" won!`)
     topicSpan.text("Refresh the page to play again.");
 
