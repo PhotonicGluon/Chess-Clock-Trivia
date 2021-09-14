@@ -1,7 +1,7 @@
 Todo:
-    - Improve layout of pages
     - Update protocols
 
 Fixme:
-    - Fix bug where deducting time on a team whose clock is 0 will deduct time from other teams
-        - Root cause: eliminated team's button still can be pressed
+    - Fix bug where eliminated teams via "natural causes" will have their "Toggle Time Button" as "Pause Clock" instead
+      of the correct "Resume Clock"
+    - Fix bug where answer field is not updated when the game ends

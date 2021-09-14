@@ -407,31 +407,31 @@ function toggleClock(button) {
 }
 
 // Code to handle team elimination
-function handleTeamElimination() {
+function handleTeamElimination(teamNumber) {
     // Stop the countdown
     isPaused = true;
 
     // Change the colour of the clock text to red
-    $(`#clock-${activeTeam}`).css("color", "red");
+    $(`#clock-${teamNumber}`).css("color", "red");
 
     // Disable the buttons of that team
-    $(`#toggle-${activeTeam}`).addClass("button-disabled");
-    $(`#deduct-${activeTeam}`).addClass("button-disabled");
+    $(`#toggle-${teamNumber}`).addClass("button-disabled");
+    $(`#deduct-${teamNumber}`).addClass("button-disabled");
 
     // Add this team to the list of eliminated teams
-    eliminatedTeams.push(activeTeam);
+    eliminatedTeams.push(teamNumber);
 
     // Change the active team to the next possible team
     let numPlayers = getNumClocks();
 
-    for (let i = activeTeam; i < activeTeam + numPlayers; i++) {
+    for (let i = teamNumber; i < teamNumber + numPlayers; i++) {
         // Generate the team number
-        let teamNumber = i % numPlayers + 1;
+        let team = i % numPlayers + 1;
 
         // Check if the team is not eliminated
-        if (!eliminatedTeams.includes(teamNumber)) {
+        if (!eliminatedTeams.includes(team)) {
             // Set that team to be the new active team
-            activeTeam = teamNumber;
+            activeTeam = team;
         }
     }
 }
@@ -455,7 +455,7 @@ function deductTime(button) {
             times[teamNumber] = 0
 
             // Handle that team's elimination
-            handleTeamElimination();  // This will update the active team for the winning team check
+            handleTeamElimination(teamNumber);  // Updates active team for the winning team check
 
             // Check how many teams are active now
             if (eliminatedTeams.length === getNumTeams() - 1) {
@@ -542,7 +542,7 @@ startGameButton.click(() => {
                     // Check if time limit exceeded
                     if (timeLeft < 0) {
                         // Handle that team's elimination
-                        handleTeamElimination();
+                        handleTeamElimination(activeTeam);  // Updates active team for the winning team check
 
                         // Check how many teams are active now
                         if (eliminatedTeams.length === getNumTeams() - 1) {
