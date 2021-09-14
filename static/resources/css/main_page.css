@@ -3,7 +3,7 @@
   color: #888;
 }
 .blurred {
-  filter: blur(8px);
+  filter: blur(4px);
 }
 .clock {
   font-size: 36pt;
@@ -46,6 +46,11 @@
   width: 100vw;
   height: 100vh;
 }
+#get-next-question {
+  position: absolute;
+  bottom: 0;
+  transform: translate(-50%);
+}
 #mobile-warning {
   display: none;
 }
@@ -53,7 +58,8 @@
   font-size: 18pt;
 }
 #question-area {
-  height: 25vh;
+  height: 30vh;
+  position: relative;
 }
 #topic {
   font-size: 14pt;

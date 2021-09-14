@@ -1,5 +1,6 @@
 Todo:
     - Improve layout of pages
+    - Update protocols
 
 Fixme:
     - Fix bug where deducting time on a team whose clock is 0 will deduct time from other teams

@@ -60,7 +60,6 @@
                 </div>
 
                 <div class="clock-area-buttons">
-
                     <a class="button button-disabled" id="toggle-1" onclick="toggleClock(this)">Resume Clock</a>
                     <br><br>
                     <a class="button button-disabled" id="deduct-1" onclick="deductTime(this)">Deduct Time</a>
@@ -75,7 +74,6 @@
                 </div>
 
                 <div class="clock-area-buttons">
-
                     <a class="button button-disabled" id="toggle-2" onclick="toggleClock(this)">Resume Clock</a>
                     <br><br>
                     <a class="button button-disabled" id="deduct-2" onclick="deductTime(this)">Deduct Time</a>
@@ -84,16 +82,20 @@
         </div>
 
         <!-- Questions Area -->
-        <hr>
-        <div class="row center" id="question-area">
-            <h2 class="question-header" id="question-header">Question <span id="question-number"></span></h2>
-            <span id="question">Start the game to get the first question.</span><br>
-            <span id="topic">This is the topic of the current question.</span><br>
-            <span class="answer-span">
-                Answer: <span class="blurred" id="answer" onclick="toggleBlur()">Answer Shown Here</span>
-            </span>
+        <div>
+            <hr>
+            <div class="row center" id="question-area">
+                <h2 class="question-header" id="question-header">Question <span id="question-number"></span></h2>
+                <span id="question">Start the game to get the first question.</span><br>
+                <span id="topic">This is the topic of the current question.</span><br>
+                <span class="answer-span">
+                    Answer: <span class="blurred" id="answer" onclick="toggleBlur()">Answer Shown Here</span>
+                </span>
+                <br><br>
+                <a class="button button-disabled" id="get-next-question">Get Next Question</a>
+            </div>
+            <hr>
         </div>
-        <hr>
 
         <!-- Setup Area -->
         <div class="row center">

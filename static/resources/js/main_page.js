@@ -15,6 +15,7 @@ let numTeamsInput = $("#num-teams");
 let timeLimitInput = $("#time-limit");
 let penaltyTimeInput = $("#penalty-time");
 
+let getNextQuestionButton = $("#get-next-question");
 let startGameButton = $("#start-game");
 let submitSessionIDButton = $("#submit-session-id");
 
@@ -124,52 +125,56 @@ function getNumTeams() {
     return getNumClocks();  // Number of clocks equals the number of teams
 }
 
-function getNextQuestion(questionNum) {
-    if (questionNum <= numQuestions) {  // Still have questions that can be asked
-        // Get the answer, topic, and question from the questions array
-        let answer = questions[questionNum - 1]["Answer"];
-        let question = questions[questionNum - 1]["Question"];
-        let topic = questions[questionNum - 1]["Topic"];
+function getNextQuestion() {
+    // Check if game has started
+    if (gameStarted) {
+        // Check the current question number
+        if (questionNumber <= numQuestions) {  // Still have questions that can be asked
+            // Get the answer, topic, and question from the questions array
+            let answer = questions[questionNumber - 1]["Answer"];
+            let question = questions[questionNumber - 1]["Question"];
+            let topic = questions[questionNumber - 1]["Topic"];
 
-        // Set the answer span to be blurred
-        setBlur(true);
+            // Set the answer span to be blurred
+            setBlur(true);
 
-        // Update the answer, question number, question, topic spans
-        answerSpan.html(answer);
-        questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${totalNumQuestions}`);
-        questionSpan.html(question);
-        topicSpan.html("Topic: " + topic);
+            // Update the answer, question number, question, topic spans
+            answerSpan.html(answer);
+            questionNumberSpan.text(`${initialQuestionNumber + questionNumber - 1}/${totalNumQuestions}`);
+            questionSpan.html(question);
+            topicSpan.html("Topic: " + topic);
 
-        // Increment question number
-        questionNumber++;
+            // Increment question number
+            questionNumber++;
 
-    } else {  // No more questions
-        // Clear the interval
-        clearInterval(interval);
+        } else {  // No more questions
+            // Clear the interval
+            clearInterval(interval);
 
-        // Disable all teams' buttons
-        let numTeams = getNumTeams();
+            // Disable all teams' buttons
+            let numTeams = getNumTeams();
 
-        for (let i = 1; i <= numTeams; i++) {
-            $(`#toggle-${i}`).addClass("button-disabled");
-            $(`#deduct-${i}`).addClass("button-disabled");
-        }
-
-        // Update text in the questions area
-        $("#question-header").html("Finished!");
-        questionSpan.text("There are no more questions!");
-        topicSpan.html("Everyone who is <b>not</b> eliminated are winners!");
-        answerSpan.html("No Answer Here!");
-
-        // Colour all non-eliminated teams' clocks green
-        for (let i = 1; i <= numTeams; i++) {
-            if (!eliminatedTeams.includes(i)) {  // Not eliminated
-                $(`#clock-${i}`).css("color", "green");
+            for (let i = 1; i <= numTeams; i++) {
+                $(`#toggle-${i}`).addClass("button-disabled");
+                $(`#deduct-${i}`).addClass("button-disabled");
             }
-        }
 
-        // Shoot some fireworks!
-        confettiFireworks(10, 0.3);
+            // Update text in the questions area
+            $("#question-header").html("Finished!");
+            questionSpan.text("There are no more questions!");
+            topicSpan.html("Everyone who is <b>not</b> eliminated are winners!");
+            answerSpan.html("No Answer Here!");
+
+            // Colour all non-eliminated teams' clocks green
+            for (let i = 1; i <= numTeams; i++) {
+                if (!eliminatedTeams.includes(i)) {  // Not eliminated
+                    $(`#clock-${i}`).css("color", "green");
+                }
+            }
+
+            // Shoot some fireworks!
+            confettiFireworks(10, 0.3);
+        }
     }
 }
 
@@ -353,6 +358,9 @@ penaltyTimeInput.change(() => {
     }
 });
 
+// Code to be run when the "Get Next Question" button is pressed
+getNextQuestionButton.click(getNextQuestion);
+
 // Code to be run when the "Toggle Clock" button is pressed
 function toggleClock(button) {
     // Check if the button is active
@@ -384,9 +392,6 @@ function toggleClock(button) {
 
             // Change the state of the interval to "not paused"
             isPaused = false;
-
-            // Get the next question
-            getNextQuestion(questionNumber);
 
         } else {
             // Change the button's text
@@ -572,7 +577,10 @@ startGameButton.click(() => {
             gameStarted = true;
 
             // Get the first question
-            getNextQuestion(questionNumber);
+            getNextQuestion();
+
+            // Enable the "Get Next Question" button
+            getNextQuestionButton.removeClass("button-disabled");
 
         } else {  // Data invalid
             // Close the list in the error message
