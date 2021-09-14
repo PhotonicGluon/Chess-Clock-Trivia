@@ -1,5 +1,4 @@
 Todo:
-    - Add mobile styling on the session setup page
     - Improve layout of pages
 
 Fixme:

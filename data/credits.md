@@ -21,11 +21,10 @@ Chess Clock Trivia's webpage's icon and favicon was generated using the followin
 
 - Graphics Title: 23f2.svg
 - Graphics Author: Copyright 2020 Twitter, Inc and other contributors
-  ([https://github.com/twitter/twemoji](https://github.com/twitter/twemoji))
+  ([at this link](https://github.com/twitter/twemoji))
 - Graphics Source:
-  [https://github.com/twitter/twemoji/blob/master/assets/svg/23f2.svg](https://github.com/twitter/twemoji/blob/master/assets/svg/23f2.svg)
-- Graphics License: CC-BY 4.0
-  ([https://creativecommons.org/licenses/by/4.0/](https://creativecommons.org/licenses/by/4.0/))
+  [at this link](https://github.com/twitter/twemoji/blob/master/assets/svg/23f2.svg)
+- Graphics License: [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 ## Licenses
 ### JQuery

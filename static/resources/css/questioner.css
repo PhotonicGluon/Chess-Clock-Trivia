@@ -18,6 +18,9 @@
   position: relative;
 }
 @media screen and (max-width: 900px) {
+  .button {
+    display: inline-block;
+  }
   #main-body {
     position: fixed;
     top: 50%;
@@ -27,6 +30,9 @@
   }
   #question-area {
     height: 50vh;
+  }
+  #reset-session {
+    margin-top: 1em;
   }
 }
 /*# sourceMappingURL=questioner.css.map */

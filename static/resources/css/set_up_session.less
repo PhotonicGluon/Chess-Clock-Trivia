@@ -1,3 +1,14 @@
+// CLASS-BASED STYLING
+.topic-item {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.topic-selection {
+    text-align: left;
+    width: 60%;
+}
+
 // ELEMENT-BASED STYLING
 #custom-trivia-qns {
     border: 1px solid #777;
@@ -8,4 +19,16 @@
 #outcome ul {
     padding: 0;
     list-style-type: none;
+}
+
+// MEDIA QUERIES
+@media screen and (max-width: 900px) {
+    .topic-item {
+        width: initial;
+    }
+
+    .topic-selection {
+        width: initial;
+        margin: 0 5vw;
+    }
 }

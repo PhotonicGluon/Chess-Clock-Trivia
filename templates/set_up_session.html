@@ -31,9 +31,9 @@
             <span>From the list below, select the topics that should be in the trivia game.</span><br><br>
             <a class="button" id="select-all-topics">Select All Topics</a>
             <a class="button" id="deselect-all-topics">Deselect All Topics</a><br><br>
-            <div style="text-align: left; width: 60%">
+            <div class="topic-selection">
                 {% for topic, count in topic_count.items() %}
-                    <div style="width: 50%; margin: 0 auto;">
+                    <div class="topic-item">
                         <input type="checkbox" value="{{ topic }}" name="topic-selector" id="topic-selector-{{ topic }}"
                                checked>
                         <label for="topic-selector-{{ topic }}">
