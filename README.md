@@ -1,4 +1,4 @@
-![Chess Clock Trivia Banner](others/Banner.png)
+![Chess Clock Trivia Banner](others/Banner.webp)
 
 Chess Clock Trivia is a trivia game where teams answer questions within a certain time limit.
 
